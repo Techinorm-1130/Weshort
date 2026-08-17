@@ -1,26 +1,166 @@
 @import "tailwindcss";
 
+/* ---- Netflix Sans (self-hosted) ----
+   Drop the font files into `public/fonts/` with these names:
+     NetflixSans-Light.woff2   (300)
+     NetflixSans-Regular.woff2 (400)
+     NetflixSans-Medium.woff2  (500)
+     NetflixSans-Bold.woff2    (700)
+     NetflixSans-Black.woff2   (900)
+   Until they exist the browser silently falls back to Helvetica/Arial. */
+@font-face {
+  font-family: "Netflix Sans";
+  src: url("/fonts/NetflixSans-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Netflix Sans";
+  src: url("/fonts/NetflixSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Netflix Sans";
+  src: url("/fonts/NetflixSans-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Netflix Sans";
+  src: url("/fonts/NetflixSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Netflix Sans";
+  src: url("/fonts/NetflixSans-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---- Weshort theme tokens (deep navy) ---- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #041a3d;      /* page navy */
+  --background-dark: #020f26; /* darker navy for gradients / edges */
+  --surface: #082450;         /* cards / panels */
+  --foreground: #ffffff;
+  --brand: #e50914;           /* red accent */
+  --brand-hover: #f6121d;
+  --muted: #a4b1c8;
+  --border: rgba(255, 255, 255, 0.12);
+  --input-bg: rgba(8, 36, 80, 0.7);
+  --input-border: rgba(148, 163, 184, 0.6);
+  --card-bg: rgba(4, 26, 61, 0.82);
+  --font-netflix: "Netflix Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: var(--font-manrope), "Manrope", "Helvetica Neue", Arial, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-dark: var(--background-dark);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-input-bg: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-card-bg: var(--card-bg);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-netflix);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  height: 100%;
+}
+body {
+  min-height: 100%;
 }
 
+/* No horizontal scroll: reveal/slide animations and off-canvas decorations
+   must never widen the page. Mobile browsers ignore overflow-x on html/body,
+   so the real clip lives on the .page-clip wrapper inside <body>. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+.page-clip {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+/* Hide the page scrollbar (scrolling still works) */
+html {
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* old Edge/IE */
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;              /* Chrome, Safari, Edge */
+}
+/* Body / subtext: Manrope. Headings + display text: Netflix Sans. */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+}
+
+/* ---- motion ---- */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)) scale(var(--scl, 1)); }
+  50%      { transform: translateY(-10px) rotate(var(--rot, 0deg)) scale(var(--scl, 1)); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 24px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes swoosh {
+  0%   { opacity: 0; transform: translateX(-12px) scale(0.9); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+.animate-float      { animation: float 6s ease-in-out infinite; }
+.animate-float-slow { animation: float 8s ease-in-out infinite; }
+.animate-fade-in    { animation: fade-in .8s ease-out both; }
+.animate-fade-up    { animation: fade-up .8s cubic-bezier(.22,.61,.36,1) both; }
+.animate-swoosh     { animation: swoosh .8s cubic-bezier(.22,.61,.36,1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .animate-float-slow, .animate-fade-in, .animate-fade-up, .animate-swoosh {
+    animation: none;
+  }
+}
+
+/* soft navy radial glow like the reference swatch */
+.bg-navy-glow {
+  background:
+    radial-gradient(120% 80% at 50% 0%, #0a2f66 0%, var(--background) 45%, var(--background-dark) 100%);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display {
+  font-family: var(--font-netflix);
 }
