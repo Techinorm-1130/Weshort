@@ -45,7 +45,7 @@ function DevicesMock() {
   return (
     <div className="relative mx-auto aspect-[4/3] w-full max-w-md select-none">
       {/* glow */}
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[70%] w-[85%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/25 blur-[90px]" />
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[55%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/20 blur-[70px]" />
 
       {/* TV (back) */}
       <div className="absolute left-[10%] top-[6%] w-[80%]">
@@ -99,7 +99,7 @@ function DevicesMock() {
 function DownloadMock() {
   return (
     <div className="relative mx-auto aspect-[4/3] w-full max-w-md select-none">
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/20 blur-[90px]" />
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[55%] w-[60%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/15 blur-[70px]" />
 
       {/* phone */}
       <div className="absolute left-1/2 top-0 w-[46%] -translate-x-1/2">
@@ -148,7 +148,7 @@ function KidsMock() {
   ];
   return (
     <div className="relative mx-auto aspect-[4/3] w-full max-w-md select-none">
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[75%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/25 blur-[90px]" />
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[55%] w-[60%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/20 blur-[70px]" />
 
       {fan.map((p) => (
         <div key={p.src} className={`absolute w-[38%] ${p.cls}`}>
@@ -219,8 +219,8 @@ const ROWS = [
 
 export default function Features() {
   return (
-    <section className="overflow-hidden bg-background px-6 py-10 sm:px-12 sm:py-16">
-      <div className="mx-auto max-w-6xl space-y-24 sm:space-y-32">
+    <section className="px-6 py-12 sm:px-12 sm:py-16">
+      <div className="mx-auto max-w-6xl space-y-20 sm:space-y-28">
         {ROWS.map((row) => (
           <div
             key={row.key}

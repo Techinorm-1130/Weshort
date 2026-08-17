@@ -30,7 +30,7 @@ export default function Plans() {
   const [period, setPeriod] = useState<"monthly" | "yearly">("monthly");
 
   return (
-    <section className="bg-background px-6 py-16 sm:px-12 sm:py-24">
+    <section className="px-6 py-12 sm:px-12 sm:py-16">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <Reveal>

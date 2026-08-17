@@ -6,7 +6,7 @@ import Reveal from "@/components/ui/Reveal";
 /** "Start your free trial today!" banner with the poster collage fading in from the right. */
 export default function TrialBanner() {
   return (
-    <section className="bg-background px-6 pb-16 sm:px-12 sm:pb-24">
+    <section className="px-6 py-12 sm:px-12 sm:py-16">
       <Reveal scale distance={32} className="relative mx-auto max-w-6xl overflow-hidden rounded-xl ring-1 ring-white/10">
         {IMAGES.authBackground && (
           <Image

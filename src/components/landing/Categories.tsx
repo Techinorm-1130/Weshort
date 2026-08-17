@@ -96,8 +96,8 @@ export default function Categories() {
     "flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/[0.06] text-white transition hover:bg-white/10 disabled:opacity-40";
 
   return (
-    <section className="overflow-hidden bg-background px-6 py-16 sm:px-12 sm:py-20">
-      <div className="mx-auto max-w-7xl">
+    <section className="overflow-hidden px-6 py-12 sm:px-12 sm:py-16">
+      <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <Reveal>
             <h2 className="text-2xl font-semibold sm:text-3xl">Explore our wide variety of categories</h2>

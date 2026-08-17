@@ -9,8 +9,8 @@ import { IMAGES } from "@/lib/constants";
  */
 export default function Hero() {
   return (
-    <section className="bg-navy-glow relative flex items-center overflow-hidden lg:min-h-[min(100svh,52rem)]">
-      {/* poster collage, kept subtle */}
+    <section className="relative flex items-center overflow-hidden lg:min-h-[min(100svh,50rem)]">
+      {/* poster collage, kept subtle; everything below fades into the page colour */}
       {IMAGES.heroBackground && (
         <Image
           src={IMAGES.heroBackground}
@@ -18,23 +18,23 @@ export default function Hero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center opacity-50"
+          className="object-cover object-center opacity-75"
         />
       )}
-      {/* overall shade so text pops */}
-      <div className="absolute inset-0 bg-background-dark/40" />
-      {/* light shade at the very top (behind the navbar) */}
-      <div className="absolute inset-x-0 top-0 h-[22%] bg-gradient-to-b from-background-dark/90 to-transparent" />
-      {/* extra shade on the left behind the copy */}
-      <div className="absolute inset-0 bg-gradient-to-r from-background-dark/70 via-transparent to-transparent" />
-      {/* long, fully-opaque fade into the page colour — no visible seam with the next section */}
-      <div className="absolute inset-x-0 bottom-0 h-[60%] bg-[linear-gradient(to_bottom,transparent_0%,rgba(4,26,61,0.35)_35%,rgba(4,26,61,0.8)_70%,var(--background)_100%)]" />
+      {/* very light uniform tint in the page colour */}
+      <div className="absolute inset-0 bg-background/5" />
+      {/* faint shade at the very top (behind the navbar) */}
+      <div className="absolute inset-x-0 top-0 h-[18%] bg-gradient-to-b from-background-dark/25 to-transparent" />
+      {/* light shade on the left behind the copy for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent" />
+      {/* long fade into the page colour — the hero simply dissolves into the page */}
+      <div className="absolute inset-x-0 bottom-0 h-[65%] bg-[linear-gradient(to_bottom,transparent_0%,rgba(4,26,61,0.3)_35%,rgba(4,26,61,0.75)_70%,var(--background)_100%)]" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-6 pb-20 pt-28 sm:gap-14 sm:px-12 sm:pt-32 md:pb-16 lg:grid-cols-2 lg:gap-8">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 px-6 pb-16 pt-28 sm:gap-14 sm:px-12 sm:pt-32 md:pb-12 lg:grid-cols-[1.15fr_1fr] lg:gap-8">
         {/* copy + CTA (staggered entrance) — centred on phones, left-aligned from md up */}
         <div className="mx-auto w-full max-w-xl text-center md:mx-0 md:text-left">
           <h1
-            className="animate-fade-up text-[2.15rem] font-black leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.6rem]"
+            className="animate-fade-up text-[2.15rem] font-black leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.25rem] lg:leading-[1.05]"
             style={{ animationDelay: "80ms" }}
           >
             Unlimited movies,
