@@ -21,8 +21,10 @@ export default function Hero() {
           className="object-cover object-center opacity-75"
         />
       )}
-      {/* very light uniform tint in the page colour */}
-      <div className="absolute inset-0 bg-background/5" />
+      {/* strong black shade over the image, then a blue shade layered on top of it */}
+      <div className="absolute inset-0 bg-black/65" />
+      {/* blue shade: lighter from the top to the centre, full strength below */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(10,47,102,0.03)_0%,rgba(10,47,102,0.06)_50%,rgba(10,47,102,0.25)_100%)]" />
       {/* faint shade at the very top (behind the navbar) */}
       <div className="absolute inset-x-0 top-0 h-[18%] bg-gradient-to-b from-background-dark/25 to-transparent" />
       {/* light shade on the left behind the copy for legibility */}

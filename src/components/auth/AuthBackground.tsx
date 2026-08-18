@@ -17,8 +17,8 @@ export default function AuthBackground() {
       ) : (
         <div className="bg-navy-glow absolute inset-0" />
       )}
-      {/* navy shade over the collage */}
-      <div className="absolute inset-0 bg-background-dark/25" />
+      {/* black shade over the collage */}
+      <div className="absolute inset-0 bg-black/65" />
     </div>
   );
 }

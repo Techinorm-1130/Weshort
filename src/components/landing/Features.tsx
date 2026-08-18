@@ -5,9 +5,16 @@ import Reveal from "@/components/ui/Reveal";
 
 const DEV = [1, 2, 3, 4].map((n) => `/images/backgrounds/devices/device${n}.jpg`);
 const KIDS = [1, 2, 3].map((n) => `/images/backgrounds/kids/kid${n}.jpg`);
+const EXTRA = [
+  "/images/backgrounds/posters/poster1.jpg",
+  "/images/backgrounds/posters/poster2.jpg",
+  "/images/backgrounds/posters/poster3.jpg",
+  "/images/backgrounds/posters/poster4.jpg",
+  "/images/backgrounds/object1.png",
+];
 
 /* ------------------------------------------------------------------ */
-/* small UI helpers                                                    */
+/* tiny WeShort app UI pieces (rendered inside device screens)         */
 /* ------------------------------------------------------------------ */
 
 function Poster({ src, className = "", sizes = "120px" }: { src: string; className?: string; sizes?: string }) {
@@ -18,84 +25,220 @@ function Poster({ src, className = "", sizes = "120px" }: { src: string; classNa
   );
 }
 
-/** A tiny "streaming app" screen: hero poster + row of thumbnails. */
-function AppScreen({ hero, row, label = "Continue Watching" }: { hero: string; row: string[]; label?: string }) {
+function WsLogo({ className = "h-2.5" }: { className?: string }) {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[#05132c]">
-      <Image src={hero} alt="" fill sizes="420px" className="object-cover object-top" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#05132c] via-[#05132c]/40 to-transparent" />
-      <span className="absolute left-2.5 top-2 text-[9px] font-black text-brand">W</span>
-      <div className="absolute inset-x-2.5 bottom-2">
-        <p className="mb-1 text-[8px] font-semibold text-white/85">{label}</p>
-        <div className="flex gap-1">
-          {row.map((s) => (
-            <Poster key={s} src={s} sizes="40px" className="aspect-[2/3] flex-1 rounded-[3px] ring-1 ring-white/15" />
-          ))}
-        </div>
+    <span className={`inline-flex items-center gap-1 ${className}`}>
+      <svg viewBox="0 0 48 34" className="h-full w-auto" fill="none" stroke="#e50914" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 5 L15 29 L26 5" />
+        <path d="M22 5 L33 29 L44 5" />
+      </svg>
+      <span className="text-[0.55em] font-bold leading-none text-white">WeShort</span>
+    </span>
+  );
+}
+
+/** Web navbar: logo · Categories · MyShorts · search · Gift Card · Dashboard */
+function WsNav({ scale = 1 }: { scale?: number }) {
+  return (
+    <div className="flex items-center gap-2 whitespace-nowrap px-2.5 py-1.5 [&>*]:shrink-0" style={{ fontSize: `${8 * scale}px` }}>
+      <WsLogo className="h-[1.1em]" />
+      <span className="ml-1 text-white/85">Categories ▾</span>
+      <span className="text-white/85">MyShorts</span>
+      <span className="flex items-center gap-1 text-white/50">
+        <svg viewBox="0 0 24 24" className="h-[1em] w-[1em]" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+        <span className="border-b border-white/30 pr-6">Search</span>
+      </span>
+      <span className="ml-auto text-white/85">Gift Card</span>
+      <span className="rounded-[2px] bg-brand px-1.5 py-[2px] font-semibold text-white">Dashboard</span>
+    </div>
+  );
+}
+
+/** Hero block: big still + title / meta / description */
+function WsHero({ src, title, meta, text, scale = 1 }: { src: string; title: string; meta: string; text: string; scale?: number }) {
+  return (
+    <div className="relative flex-1 overflow-hidden">
+      <Image src={src} alt="" fill sizes="600px" className="object-cover object-top" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10" />
+      <div className="absolute inset-x-0 bottom-0 px-2.5 pb-2" style={{ fontSize: `${8 * scale}px` }}>
+        <p className="text-[2.2em] font-black uppercase leading-none tracking-tight">{title}</p>
+        <p className="mt-1 text-[0.95em] font-semibold text-white/85">{meta}</p>
+        <p className="mt-1 max-w-[70%] text-[0.9em] leading-snug text-white/70">{text}</p>
+      </div>
+    </div>
+  );
+}
+
+/** Poster row with heading + "Browse all" */
+function WsRow({ label, items, scale = 1 }: { label: string; items: string[]; scale?: number }) {
+  return (
+    <div className="px-2.5 pt-1.5" style={{ fontSize: `${8 * scale}px` }}>
+      <p className="mb-1 font-bold">
+        {label} <span className="ml-1 font-normal text-white/50">Browse all ›</span>
+      </p>
+      <div className="grid grid-cols-5 gap-1">
+        {items.map((s, i) => (
+          <span key={i} className="relative aspect-[3/4] overflow-hidden rounded-[2px]">
+            <Image src={s} alt="" fill sizes="80px" className="object-cover" />
+            <span className="absolute right-0.5 top-0.5 rounded-[2px] bg-black/70 px-0.5 text-[0.7em] text-white/90">{12 + i * 3}&apos;</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Mobile app screen: status bar, logo, "New Releases" 2×2 grid, bottom nav */
+function WsPhoneScreen({ items, scale = 1 }: { items: string[]; scale?: number }) {
+  return (
+    <div className="flex h-full flex-col bg-[#05132c]" style={{ fontSize: `${7 * scale}px` }}>
+      {/* status bar spacer (under the dynamic island) */}
+      <div className="h-[6%]" />
+      <div className="flex items-center justify-between px-2">
+        <WsLogo className="h-[1.2em]" />
+        <span className="flex gap-1.5 text-white/80">
+          <svg viewBox="0 0 24 24" className="h-[1.2em] w-[1.2em]" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="5" width="18" height="12" rx="2" /><path d="M8 21h8" /></svg>
+          <svg viewBox="0 0 24 24" className="h-[1.2em] w-[1.2em]" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+        </span>
+      </div>
+      <p className="mt-2 truncate whitespace-nowrap px-2 font-bold">
+        New Releases 4Free <span className="text-white/50">›</span>
+      </p>
+      <div className="mt-1 grid flex-1 grid-cols-2 gap-1.5 px-2">
+        {items.slice(0, 4).map((s, i) => (
+          <span key={i} className="relative overflow-hidden rounded-[3px]">
+            <Image src={s} alt="" fill sizes="80px" className="object-cover" />
+            <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-black/85 to-transparent px-1 pb-1 pt-3 text-[0.8em] font-semibold uppercase leading-none">
+              {["The Hole", "Be Gay Tomorrow", "La Slitta", "Des Hommes"][i]}
+            </span>
+          </span>
+        ))}
+      </div>
+      {/* bottom nav */}
+      <div className="flex items-center justify-around px-3 pb-[10%] pt-2 text-white/75">
+        <svg viewBox="0 0 24 24" className="h-[1.3em] w-[1.3em] text-brand" fill="currentColor"><path d="M8 5l11 7-11 7z" /></svg>
+        <svg viewBox="0 0 24 24" className="h-[1.3em] w-[1.3em]" fill="currentColor"><path d="M12 21s-7-4.4-9.3-8.6C.9 9 2.6 5 6.5 5c2 0 3.5 1 4.5 2.4C12 6 13.5 5 15.5 5 19.4 5 21.1 9 20.3 12.4 18 16.6 12 21 12 21z" /></svg>
+        <svg viewBox="0 0 24 24" className="h-[1.3em] w-[1.3em]" fill="currentColor"><circle cx="12" cy="8" r="4" /><path d="M4 21c1-4 4.2-6 8-6s7 2 8 6z" /></svg>
       </div>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 1) Devices — tight, front-facing cluster                            */
+/* device frames                                                        */
 /* ------------------------------------------------------------------ */
 
+const bezel = "bg-[linear-gradient(135deg,#2a2f3a,#0b0d12_45%,#1c2029)] shadow-[0_30px_70px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.25)]";
+
+function TvFrame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={className}>
+      <div className={`rounded-md p-[5px] ${bezel}`}>
+        <div className="flex aspect-[16/9] flex-col overflow-hidden rounded-[3px] bg-black">{children}</div>
+      </div>
+      <div className="mx-auto h-4 w-[6%] bg-gradient-to-b from-[#1c2029] to-[#0b0d12]" />
+      <div className="mx-auto h-1.5 w-[34%] rounded-full bg-gradient-to-r from-transparent via-[#3a4150] to-transparent" />
+    </div>
+  );
+}
+
+function LaptopFrame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={className}>
+      <div className={`rounded-t-lg p-[4px] pb-0 ${bezel}`}>
+        <div className="flex aspect-[16/10] flex-col overflow-hidden rounded-t-[4px] bg-black">{children}</div>
+      </div>
+      <div className="h-2.5 rounded-b-md bg-[linear-gradient(to_bottom,#8b93a1,#3a4150)] shadow-[0_10px_20px_rgba(0,0,0,0.6)]">
+        <div className="mx-auto h-1 w-[16%] rounded-b bg-[#111318]" />
+      </div>
+    </div>
+  );
+}
+
+function TabletFrame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={className}>
+      <div className={`rounded-xl p-[5px] ${bezel}`}>
+        <div className="flex aspect-[4/3] flex-col overflow-hidden rounded-lg bg-black">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+/** iPhone-style frame: titanium edge, side buttons, dynamic island, home indicator. */
+function PhoneFrame({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+  return (
+    <div className={className} style={style}>
+      <div className="relative">
+      {/* side buttons */}
+      <span aria-hidden className="absolute -left-[2px] top-[18%] h-[4%] w-[2px] rounded-l-sm bg-[#8b919c]" />
+      <span aria-hidden className="absolute -left-[2px] top-[25%] h-[7%] w-[2px] rounded-l-sm bg-[#8b919c]" />
+      <span aria-hidden className="absolute -left-[2px] top-[34%] h-[7%] w-[2px] rounded-l-sm bg-[#8b919c]" />
+      <span aria-hidden className="absolute -right-[2px] top-[27%] h-[10%] w-[2px] rounded-r-sm bg-[#8b919c]" />
+
+      {/* titanium frame */}
+      <div className="rounded-[18%/8.5%] bg-[linear-gradient(135deg,#a3a9b4_0%,#4b515c_30%,#1c2029_60%,#8b919c_100%)] p-[2px] shadow-[0_35px_70px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.35)]">
+        {/* black bezel */}
+        <div className="rounded-[17%/8%] bg-black p-[3px]">
+          <div className="relative aspect-[9/19.5] overflow-hidden rounded-[15%/7%] bg-black">
+            {children}
+            {/* dynamic island */}
+            <span className="absolute left-1/2 top-[1.6%] z-20 h-[3.2%] w-[30%] -translate-x-1/2 rounded-full bg-black ring-1 ring-white/5" />
+            {/* home indicator */}
+            <span className="absolute bottom-[1.4%] left-1/2 z-20 h-[0.6%] w-[34%] -translate-x-1/2 rounded-full bg-white/70" />
+            {/* glare */}
+            <span className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(115deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.04)_28%,transparent_45%)]" />
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* scenes                                                              */
+/* ------------------------------------------------------------------ */
+
+/** All-devices composition: TV back-centre, tablet + phone front-left, laptop front-right. */
 function DevicesMock() {
   return (
-    <div className="relative mx-auto aspect-[4/3] w-full max-w-md select-none">
-      {/* glow */}
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[55%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/20 blur-[70px]" />
+    <div className="relative mx-auto aspect-[16/10] w-full max-w-xl select-none">
+      <TvFrame className="absolute left-[16%] top-0 w-[62%]">
+        <WsNav />
+        <WsHero
+          src={DEV[3]}
+          title="Skin"
+          meta="2018 · UNITED STATES · R"
+          text="In a small supermarket in rural America, a man smiles at a boy across the aisle. That harmless moment will spark a war between gangs."
+        />
+      </TvFrame>
 
-      {/* TV (back) */}
-      <div className="absolute left-[10%] top-[6%] w-[80%]">
-        <div className="rounded-lg bg-[#0e1420] p-[5px] shadow-[0_30px_60px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
-          <div className="aspect-video overflow-hidden rounded-md">
-            <AppScreen hero={DEV[0]} row={DEV} />
-          </div>
-        </div>
-        <div className="mx-auto h-3 w-[8%] bg-[#1a2030]" />
-        <div className="mx-auto h-1 w-[36%] rounded-full bg-[#2a3142]" />
-      </div>
+      <LaptopFrame className="absolute bottom-0 right-0 w-[48%]">
+        <WsNav scale={0.85} />
+        <WsRow label="New Releases 4Free" items={[DEV[0], DEV[1], DEV[2], EXTRA[0], EXTRA[1]]} scale={0.85} />
+        <WsRow label="Oscars®" items={[EXTRA[2], EXTRA[3], DEV[3], EXTRA[4], DEV[0]]} scale={0.85} />
+      </LaptopFrame>
 
-      {/* Laptop (front-right, overlapping TV) */}
-      <div className="absolute bottom-[8%] right-0 w-[54%]">
-        <div className="rounded-t-lg bg-[#1a2030] p-[4px] pb-0 shadow-[0_25px_50px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
-          <div className="aspect-[16/10] overflow-hidden rounded-t-md">
-            <AppScreen hero={DEV[1]} row={[DEV[2], DEV[3], DEV[0], DEV[1]]} label="Trending Now" />
-          </div>
-        </div>
-        <div className="h-2.5 rounded-b-md bg-gradient-to-b from-[#3a4356] to-[#1a2030] shadow-[0_8px_16px_rgba(0,0,0,0.6)]">
-          <div className="mx-auto h-1 w-[16%] rounded-b bg-[#0e1420]" />
-        </div>
-      </div>
+      <TabletFrame className="absolute bottom-[8%] left-0 w-[30%]">
+        <WsNav scale={0.6} />
+        <WsHero
+          src={DEV[1]}
+          title="How to be alone"
+          meta="2017 · UNITED STATES · R"
+          text="Dark and mischievously funny."
+          scale={0.7}
+        />
+      </TabletFrame>
 
-      {/* Tablet (front-left, overlapping TV) */}
-      <div className="absolute bottom-[10%] left-0 w-[30%]">
-        <div className="rounded-xl bg-[#1a2030] p-[4px] shadow-[0_25px_50px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
-          <div className="aspect-[3/4] overflow-hidden rounded-lg">
-            <AppScreen hero={DEV[2]} row={[DEV[3], DEV[0], DEV[1]]} label="My List" />
-          </div>
-        </div>
-      </div>
-
-      {/* Phone (front-center, overlapping tablet + laptop) */}
-      <div className="absolute bottom-[4%] left-[31%] w-[16%]">
-        <div className="rounded-[14px] bg-[#1a2030] p-[3px] shadow-[0_25px_50px_rgba(0,0,0,0.75)] ring-1 ring-white/10">
-          <div className="relative aspect-[9/18] overflow-hidden rounded-[11px]">
-            <Poster src={DEV[3]} sizes="90px" className="h-full w-full" />
-            <span className="absolute left-1/2 top-1 h-1 w-5 -translate-x-1/2 rounded-full bg-black/80" />
-          </div>
-        </div>
-      </div>
+      <PhoneFrame className="absolute bottom-[-2%] left-[25%] w-[14%]">
+        <WsPhoneScreen items={[EXTRA[0], DEV[2], EXTRA[3], DEV[0]]} scale={0.8} />
+      </PhoneFrame>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* 2) Download — phone + overlapping download card                     */
-/* ------------------------------------------------------------------ */
-
+/** Upright phone (poster) + premium download card overlapping its lower half. */
 function DownloadMock() {
   return (
     <div className="relative mx-auto aspect-[4/3] w-full max-w-md select-none">
@@ -113,32 +256,102 @@ function DownloadMock() {
         </div>
       </div>
 
-      {/* download card — overlaps the lower half of the phone */}
-      <div className="absolute bottom-[10%] left-1/2 w-[92%] -translate-x-1/2">
-        <div
-          className="animate-float-slow flex items-center gap-4 rounded-2xl border border-white/15 bg-[#0a1a3a] px-4 py-3.5 shadow-[0_30px_70px_rgba(0,0,0,0.75)]"
-          style={{ animationDelay: "0.6s" }}
-        >
-          <Poster src={DEV[1]} sizes="60px" className="h-[4.5rem] w-12 shrink-0 rounded-lg ring-1 ring-white/15" />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-lg font-bold leading-tight">Fight Club</p>
-            <p className="mt-0.5 text-sm text-sky-400">Downloading…</p>
+      {/* futuristic HUD download panel */}
+      <div className="absolute bottom-[6%] left-1/2 w-[94%] -translate-x-1/2">
+        <div className="animate-float-slow relative" style={{ animationDelay: "0.6s" }}>
+          {/* neon gradient border (mask trick) */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-px rounded-2xl bg-[linear-gradient(120deg,rgba(56,189,248,0.9),rgba(56,189,248,0.1)_35%,rgba(229,9,20,0.15)_65%,rgba(56,189,248,0.8))] opacity-80 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude] p-px"
+          />
+          <div className="relative overflow-hidden rounded-2xl bg-[#040f26]/90 p-4 shadow-[0_30px_80px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+            {/* faint grid + scanline glow */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.6)_1px,transparent_1px)] [background-size:22px_22px]" />
+            <div aria-hidden className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full bg-sky-400/20 blur-3xl" />
+            {/* HUD corner brackets */}
+            {["left-2 top-2 border-l border-t", "right-2 top-2 border-r border-t", "left-2 bottom-2 border-l border-b", "right-2 bottom-2 border-r border-b"].map((c) => (
+              <span key={c} aria-hidden className={`pointer-events-none absolute h-3 w-3 border-sky-300/70 ${c}`} />
+            ))}
+
+            <div className="relative flex items-center gap-4">
+              {/* progress ring around the poster */}
+              <div className="relative h-20 w-20 shrink-0">
+                {/* spinning glow */}
+                <span aria-hidden className="animate-spin-slow absolute -inset-1 rounded-full bg-[conic-gradient(from_0deg,transparent_0%,rgba(56,189,248,0.7)_20%,transparent_40%)] blur-md" />
+                {/* ring: 68% */}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 rounded-full"
+                  style={{ background: "conic-gradient(#38bdf8 0 68%, rgba(255,255,255,0.12) 68% 100%)" }}
+                />
+                <span aria-hidden className="absolute inset-[3px] rounded-full bg-[#040f26]" />
+                <span className="absolute inset-[6px] overflow-hidden rounded-full ring-1 ring-white/15">
+                  <Image src={DEV[1]} alt="" fill sizes="80px" className="object-cover object-top" />
+                </span>
+                {/* percent badge */}
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-sky-400 px-1.5 py-[1px] text-[10px] font-bold text-[#04122c] shadow-[0_0_14px_rgba(56,189,248,0.9)]">
+                  68%
+                </span>
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-sky-300">
+                  <span className="animate-blink h-1.5 w-1.5 rounded-full bg-sky-300 shadow-[0_0_8px_rgba(56,189,248,1)]" />
+                  Downloading
+                </div>
+                <p className="mt-1 truncate text-lg font-bold leading-tight">Fight Club</p>
+                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-white/55">
+                  <span>4K · HDR</span>
+                  <span>1.2 GB</span>
+                  <span className="text-white/80">24 MB/s</span>
+                  <span>2 min left</span>
+                </div>
+                {/* shimmering track */}
+                <div className="relative mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <div className="relative h-full w-[68%] overflow-hidden rounded-full bg-gradient-to-r from-sky-500 via-sky-400 to-cyan-300 shadow-[0_0_14px_rgba(56,189,248,0.9)]">
+                    <span aria-hidden className="animate-shimmer absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/70 to-transparent" />
+                  </div>
+                </div>
+              </div>
+
+              {/* pause / action */}
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sky-300/40 bg-sky-400/10 text-sky-200 shadow-[0_0_20px_rgba(56,189,248,0.25)]">
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+              </span>
+            </div>
+
+            {/* queue */}
+            <div className="relative mt-3 flex items-center gap-3 border-t border-white/10 pt-3">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Queue</span>
+              {[
+                { src: EXTRA[3], pct: 100, label: "Peaky Blinders", state: "Saved" },
+                { src: DEV[2], pct: 32, label: "The Batman", state: "32%" },
+              ].map((q) => (
+                <span key={q.label} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] py-1 pl-1 pr-2.5">
+                  <span className="relative h-7 w-7">
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 rounded-full"
+                      style={{ background: `conic-gradient(${q.pct === 100 ? "#34d399" : "#38bdf8"} 0 ${q.pct}%, rgba(255,255,255,0.12) ${q.pct}% 100%)` }}
+                    />
+                    <span aria-hidden className="absolute inset-[2px] rounded-full bg-[#040f26]" />
+                    <span className="absolute inset-[4px] overflow-hidden rounded-full">
+                      <Image src={q.src} alt="" fill sizes="30px" className="object-cover object-top" />
+                    </span>
+                  </span>
+                  <span className="text-[11px] leading-tight">
+                    <span className="block font-semibold text-white/85">{q.label}</span>
+                    <span className={q.pct === 100 ? "text-emerald-300" : "text-sky-300"}>{q.state}</span>
+                  </span>
+                </span>
+              ))}
+            </div>
           </div>
-          <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
-            </svg>
-            <span className="absolute inset-0 animate-ping rounded-full border border-sky-400/50" />
-          </span>
         </div>
       </div>
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* 3) Kids — fanned kids posters + kids badge                          */
-/* ------------------------------------------------------------------ */
 
 function KidsMock() {
   const fan = [
@@ -149,34 +362,19 @@ function KidsMock() {
   return (
     <div className="relative mx-auto aspect-[4/3] w-full max-w-md select-none">
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[55%] w-[60%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/20 blur-[70px]" />
-
       {fan.map((p) => (
         <div key={p.src} className={`absolute w-[38%] ${p.cls}`}>
-          <Poster
-            src={p.src}
-            sizes="200px"
-            className="aspect-[2/3] w-full rounded-xl shadow-[0_30px_60px_rgba(0,0,0,0.7)] ring-1 ring-white/15"
-          />
+          <Poster src={p.src} sizes="200px" className="aspect-[2/3] w-full rounded-xl shadow-[0_30px_60px_rgba(0,0,0,0.7)] ring-1 ring-white/15" />
         </div>
       ))}
-
-      {/* kids badge */}
       <div className="absolute bottom-[4%] left-1/2 z-30 -translate-x-1/2">
-        <div
-          className="animate-float rounded-2xl bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 px-8 py-3 shadow-[0_25px_60px_rgba(0,0,0,0.7),inset_0_2px_0_rgba(255,255,255,0.4)] [--rot:-3deg]"
-        >
+        <div className="animate-float rounded-2xl bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 px-8 py-3 shadow-[0_25px_60px_rgba(0,0,0,0.7),inset_0_2px_0_rgba(255,255,255,0.4)] [--rot:-3deg]">
           <span className="bg-gradient-to-b from-yellow-100 to-amber-400 bg-clip-text text-4xl font-black tracking-tight text-transparent drop-shadow sm:text-5xl">
             kids
           </span>
         </div>
       </div>
-
-      {[
-        ["12%", "6%"],
-        ["86%", "10%"],
-        ["8%", "70%"],
-        ["90%", "66%"],
-      ].map(([l, t], i) => (
+      {[["12%", "6%"], ["86%", "10%"], ["8%", "70%"], ["90%", "66%"]].map(([l, t], i) => (
         <svg key={i} viewBox="0 0 24 24" className="absolute h-3.5 w-3.5 text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]" style={{ left: l, top: t }} fill="currentColor">
           <path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z" />
         </svg>
@@ -189,6 +387,19 @@ function KidsMock() {
 /* section                                                             */
 /* ------------------------------------------------------------------ */
 
+/** Small red W mark + rule, like the WeShort site headings. */
+function Accent() {
+  return (
+    <div className="mb-5 flex items-center gap-4">
+      <svg viewBox="0 0 48 34" className="h-5 w-auto" fill="none" stroke="#e50914" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 5 L15 29 L26 5" />
+        <path d="M22 5 L33 29 L44 5" />
+      </svg>
+      <span className="h-px flex-1 bg-white/15" />
+    </div>
+  );
+}
+
 const ROWS = [
   {
     key: "devices",
@@ -198,14 +409,16 @@ const ROWS = [
     image: FEATURE_IMAGES.devices,
     mock: <DevicesMock />,
     reverse: false,
+    wide: true,
   },
   {
     key: "download",
     title: "Download Now, Watch Later: Weshort For On-The-Go Viewing",
-    text: "With Weshort's download feature, you never have to miss a moment of your favorite shorts and series. Download now and watch later, on your own terms.",
+    text: "With Weshort, cinema becomes pocket-friendly — the most beautiful short films always at your fingertips. On your lunch break, on the train, before going to sleep: download now and watch later, on your own terms.",
     image: FEATURE_IMAGES.download,
     mock: <DownloadMock />,
     reverse: true,
+    wide: false,
   },
   {
     key: "kids",
@@ -214,6 +427,7 @@ const ROWS = [
     image: FEATURE_IMAGES.kids,
     mock: <KidsMock />,
     reverse: false,
+    wide: false,
   },
 ] as const;
 
@@ -224,7 +438,9 @@ export default function Features() {
         {ROWS.map((row) => (
           <div
             key={row.key}
-            className={`grid items-center gap-10 lg:grid-cols-2 lg:gap-16 ${row.reverse ? "lg:[&>*:first-child]:order-2" : ""}`}
+            className={`grid items-center gap-10 lg:gap-14 ${
+              row.wide ? "lg:grid-cols-[1.35fr_1fr]" : "lg:grid-cols-2"
+            } ${row.reverse ? "lg:[&>*:first-child]:order-2" : ""}`}
           >
             <Reveal from={row.reverse ? "right" : "left"} distance={40} scale>
               {row.image ? (
@@ -236,7 +452,8 @@ export default function Features() {
               )}
             </Reveal>
 
-            <Reveal from={row.reverse ? "left" : "right"} delay={120} className={row.reverse ? "lg:pr-8" : "lg:pl-8"}>
+            <Reveal from={row.reverse ? "left" : "right"} delay={120} className={row.reverse ? "lg:pr-6" : "lg:pl-6"}>
+              <Accent />
               <h2 className="text-2xl font-bold leading-snug sm:text-3xl">{row.title}</h2>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-muted">{row.text}</p>
               {"link" in row && row.link ? (

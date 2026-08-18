@@ -14,7 +14,7 @@ type Props = {
   duration?: number;
   /** Start scaled down slightly. */
   scale?: boolean;
-  /** Animate only once (default) or every time it enters the viewport. */
+  /** Replay every time it enters the viewport (default) or only once. */
   once?: boolean;
   className?: string;
   as?: ElementType;
@@ -29,7 +29,7 @@ export default function Reveal({
   distance = 28,
   duration = 700,
   scale = false,
-  once = true,
+  once = false,
   className = "",
   as: Tag = "div",
   style,
@@ -53,8 +53,8 @@ export default function Reveal({
           setShown(false);
         }
       },
-      // no negative bottom margin: content at the very end of the page (footer) must still reveal
-      { threshold: 0.1, rootMargin: "0px 0px 0px 0px" },
+      // threshold 0 so it resets only when fully out of view, and reveals as soon as any part enters
+      { threshold: 0, rootMargin: "0px 0px 0px 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -78,7 +78,10 @@ export default function Reveal({
         ...style,
         opacity: shown ? 1 : 0,
         transform: shown ? "translate3d(0,0,0) scale(1)" : hidden,
-        transition: `opacity ${duration}ms cubic-bezier(.22,.61,.36,1) ${delay}ms, transform ${duration}ms cubic-bezier(.22,.61,.36,1) ${delay}ms`,
+        // animate in; reset instantly when it leaves the viewport (no visible fade-out)
+        transition: shown
+          ? `opacity ${duration}ms cubic-bezier(.22,.61,.36,1) ${delay}ms, transform ${duration}ms cubic-bezier(.22,.61,.36,1) ${delay}ms`
+          : "none",
         willChange: "opacity, transform",
       }}
     >

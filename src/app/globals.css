@@ -145,6 +145,16 @@ body {
 .animate-fade-up    { animation: fade-up .8s cubic-bezier(.22,.61,.36,1) both; }
 .animate-swoosh     { animation: swoosh .8s cubic-bezier(.22,.61,.36,1) both; }
 
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+.animate-shimmer   { animation: shimmer 2.2s ease-in-out infinite; }
+.animate-blink     { animation: blink 1.2s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   .animate-float, .animate-float-slow, .animate-fade-in, .animate-fade-up, .animate-swoosh {
     animation: none;
