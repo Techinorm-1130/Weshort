@@ -72,7 +72,7 @@ function WMark({ className }: { className: string }) {
 /** WeShort-style footer: centered logo, watermark W's, link grid, socials + language, legal line. */
 export default function SiteFooter() {
   return (
-    <footer className="relative z-10 w-full shrink-0 overflow-hidden bg-[linear-gradient(to_bottom,transparent_0%,transparent_40%,rgba(2,15,38,0.6)_100%)] px-6 pb-10 pt-8 text-sm sm:px-12 sm:pt-12">
+    <footer className="section-deep-end relative z-10 w-full shrink-0 overflow-hidden px-6 pb-10 pt-8 text-sm sm:px-12 sm:pt-12">
       {/* watermarks (desktop only — they'd sit behind the links on phones) */}
       <WMark className="hidden md:block -left-24 top-6 h-64 w-auto opacity-40 lg:-left-16 lg:h-72" />
       <WMark className="hidden md:block -right-24 top-6 h-64 w-auto opacity-40 lg:-right-16 lg:h-72" />

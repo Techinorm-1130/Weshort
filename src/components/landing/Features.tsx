@@ -1,7 +1,24 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import Link from "next/link";
+import fs from "node:fs";
+import path from "node:path";
 import { FEATURE_IMAGES } from "@/lib/constants";
 import Reveal from "@/components/ui/Reveal";
+
+/**
+ * Real illustration lookup (server-side): if `public/images/features/<name>.(png|jpg|jpeg|webp)`
+ * exists it is used automatically; otherwise the CSS mockup renders. Explicit paths in
+ * FEATURE_IMAGES always win.
+ */
+function featureImage(name: "devices" | "download" | "kids"): string | null {
+  const explicit = FEATURE_IMAGES[name];
+  if (explicit) return explicit;
+  for (const ext of ["png", "jpg", "jpeg", "webp"]) {
+    const rel = `/images/features/${name}.${ext}`;
+    if (fs.existsSync(path.join(process.cwd(), "public", rel))) return rel;
+  }
+  return null;
+}
 
 const DEV = [1, 2, 3, 4].map((n) => `/images/backgrounds/devices/device${n}.jpg`);
 const KIDS = [1, 2, 3].map((n) => `/images/backgrounds/kids/kid${n}.jpg`);
@@ -200,39 +217,68 @@ function PhoneFrame({ children, className = "", style }: { children: React.React
 /* scenes                                                              */
 /* ------------------------------------------------------------------ */
 
-/** All-devices composition: TV back-centre, tablet + phone front-left, laptop front-right. */
+/** White-bezel tablet (like the reference iPad). */
+function WhiteTabletFrame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={className}>
+      <div className="rounded-[9px] bg-[linear-gradient(135deg,#9aa1ad,#6b7280_50%,#4b5261)] p-[3px] shadow-[0_30px_60px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.35)] ring-1 ring-black/30">
+        <div className="flex aspect-[16/10] flex-col overflow-hidden rounded-[6px] bg-black">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * All-devices — replica of the WeShort device family shot:
+ * big TV back-centre with stand, laptop front-right, white tablet front-left, phone front-centre.
+ * (Set FEATURE_IMAGES.devices in constants.ts to use a real render instead.)
+ */
 function DevicesMock() {
   return (
-    <div className="relative mx-auto aspect-[16/10] w-full max-w-xl select-none">
-      <TvFrame className="absolute left-[16%] top-0 w-[62%]">
-        <WsNav />
-        <WsHero
-          src={DEV[3]}
-          title="Skin"
-          meta="2018 · UNITED STATES · R"
-          text="In a small supermarket in rural America, a man smiles at a boy across the aisle. That harmless moment will spark a war between gangs."
-        />
-      </TvFrame>
+    <div className="relative mx-auto aspect-[1570/640] w-full max-w-4xl select-none lg:scale-[1.08] lg:origin-left">
+      {/* TV — back centre */}
+      <div className="absolute left-[24%] top-[6%] w-[50%]">
+        <div className="rounded-[4px] bg-[#0b0d12] p-[4px] shadow-[0_40px_80px_rgba(0,0,0,0.75)] ring-1 ring-white/10">
+          <div className="flex aspect-[16/9] flex-col overflow-hidden rounded-[2px] bg-black">
+            <WsNav scale={1.05} />
+            <WsHero
+              src={DEV[3]}
+              title="Skin"
+              meta="2018 · UNITED STATES · R"
+              text="In a small supermarket in rural America, a man smiles at a boy across the aisle. That harmless moment will spark a war between gangs."
+              scale={1.05}
+            />
+          </div>
+        </div>
+        {/* neck + foot */}
+        <div className="mx-auto h-[14px] w-[9%] bg-[linear-gradient(to_bottom,#1c2029,#0b0d12)]" />
+        <div className="mx-auto h-[6px] w-[36%] rounded-[3px] bg-[linear-gradient(90deg,#1c2029,#3a4150,#1c2029)] shadow-[0_10px_20px_rgba(0,0,0,0.6)]" />
+      </div>
 
-      <LaptopFrame className="absolute bottom-0 right-0 w-[48%]">
-        <WsNav scale={0.85} />
-        <WsRow label="New Releases 4Free" items={[DEV[0], DEV[1], DEV[2], EXTRA[0], EXTRA[1]]} scale={0.85} />
-        <WsRow label="Oscars®" items={[EXTRA[2], EXTRA[3], DEV[3], EXTRA[4], DEV[0]]} scale={0.85} />
-      </LaptopFrame>
+      {/* Laptop — front right */}
+      <div className="absolute left-[59%] top-[34%] w-[38%]">
+        <div className="rounded-t-[8px] bg-[#0f1218] p-[5px] pb-0 shadow-[0_35px_70px_rgba(0,0,0,0.75)] ring-1 ring-white/10">
+          <div className="flex aspect-[16/10] flex-col overflow-hidden rounded-t-[3px] bg-black">
+            <WsNav scale={0.8} />
+            <WsRow label="Nuove Uscite 4Free" items={[DEV[0], DEV[1], DEV[2], EXTRA[0], EXTRA[1]]} scale={0.8} />
+            <WsRow label="Oscars®" items={[EXTRA[2], EXTRA[3], DEV[3], EXTRA[4], DEV[0]]} scale={0.8} />
+          </div>
+        </div>
+        {/* base */}
+        <div className="-mx-[4%] h-[9px] rounded-b-[8px] bg-[linear-gradient(to_bottom,#3a4150,#1c2029)] shadow-[0_12px_24px_rgba(0,0,0,0.6)]">
+          <div className="mx-auto h-[3px] w-[14%] rounded-b-[3px] bg-[#0b0d12]" />
+        </div>
+      </div>
 
-      <TabletFrame className="absolute bottom-[8%] left-0 w-[30%]">
-        <WsNav scale={0.6} />
-        <WsHero
-          src={DEV[1]}
-          title="How to be alone"
-          meta="2017 · UNITED STATES · R"
-          text="Dark and mischievously funny."
-          scale={0.7}
-        />
-      </TabletFrame>
+      {/* Tablet — front left, white bezel */}
+      <WhiteTabletFrame className="absolute left-[9%] top-[42%] w-[25%]">
+        <WsNav scale={0.55} />
+        <WsHero src={DEV[1]} title="How to be alone" meta="2017 · UNITED STATES · R" text="Dark and mischievously funny." scale={0.62} />
+      </WhiteTabletFrame>
 
-      <PhoneFrame className="absolute bottom-[-2%] left-[25%] w-[14%]">
-        <WsPhoneScreen items={[EXTRA[0], DEV[2], EXTRA[3], DEV[0]]} scale={0.8} />
+      {/* Phone — front centre */}
+      <PhoneFrame className="absolute left-[27.5%] top-[52%] w-[8%] drop-shadow-[0_25px_40px_rgba(0,0,0,0.75)]">
+        <WsPhoneScreen items={[EXTRA[0], DEV[2], EXTRA[3], DEV[0]]} scale={0.6} />
       </PhoneFrame>
     </div>
   );
@@ -406,7 +452,7 @@ const ROWS = [
     title: "Your Entertainment, Anytime, Anywhere: Weshort On All Devices",
     text: "Weshort is compatible with a wide range of devices, so you can watch on the device of your choice. Whether you prefer watching on a big screen or a smaller device, Weshort has you covered.",
     link: { label: "View Device List", href: "#" },
-    image: FEATURE_IMAGES.devices,
+    image: featureImage("devices"),
     mock: <DevicesMock />,
     reverse: false,
     wide: true,
@@ -415,7 +461,7 @@ const ROWS = [
     key: "download",
     title: "Download Now, Watch Later: Weshort For On-The-Go Viewing",
     text: "With Weshort, cinema becomes pocket-friendly — the most beautiful short films always at your fingertips. On your lunch break, on the train, before going to sleep: download now and watch later, on your own terms.",
-    image: FEATURE_IMAGES.download,
+    image: featureImage("download"),
     mock: <DownloadMock />,
     reverse: true,
     wide: false,
@@ -424,28 +470,35 @@ const ROWS = [
     key: "kids",
     title: "Parental Controls: Keeping Your Kids Safe On Weshort",
     text: "With parental controls, you can give your children the freedom to explore, while still keeping them safe from inappropriate content.",
-    image: FEATURE_IMAGES.kids,
+    image: featureImage("kids"),
     mock: <KidsMock />,
     reverse: false,
     wide: false,
   },
 ] as const;
 
+/** All three feature rows in one grouped section. */
 export default function Features() {
   return (
-    <section className="px-6 py-12 sm:px-12 sm:py-16">
-      <div className="mx-auto max-w-6xl space-y-20 sm:space-y-28">
+    <section id="features" className="px-6 py-8 sm:px-12 sm:py-10">
+      <div className="mx-auto max-w-6xl space-y-16 sm:space-y-20">
         {ROWS.map((row) => (
           <div
             key={row.key}
             className={`grid items-center gap-10 lg:gap-14 ${
-              row.wide ? "lg:grid-cols-[1.35fr_1fr]" : "lg:grid-cols-2"
+              row.wide ? "lg:grid-cols-[2.2fr_1fr]" : "lg:grid-cols-2"
             } ${row.reverse ? "lg:[&>*:first-child]:order-2" : ""}`}
           >
             <Reveal from={row.reverse ? "right" : "left"} distance={40} scale>
               {row.image ? (
-                <div className="relative mx-auto aspect-[4/3] w-full max-w-md">
-                  <Image src={row.image} alt="" fill sizes="(max-width: 1024px) 90vw, 450px" className="object-contain" />
+                <div className={`relative mx-auto w-full ${row.wide ? "aspect-[1570/640] max-w-4xl" : "aspect-[4/3] max-w-md"}`}>
+                  <Image
+                    src={row.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 90vw, 800px"
+                    className="object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
+                  />
                 </div>
               ) : (
                 row.mock

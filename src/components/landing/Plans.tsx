@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -30,7 +30,7 @@ export default function Plans() {
   const [period, setPeriod] = useState<"monthly" | "yearly">("monthly");
 
   return (
-    <section className="px-6 py-12 sm:px-12 sm:py-16">
+    <section className="px-6 py-8 sm:px-12 sm:py-10">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <Reveal>

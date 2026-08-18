@@ -40,24 +40,47 @@ export default function Reveal({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setShown(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShown(true);
-          if (once) io.disconnect();
-        } else if (!once) {
-          setShown(false);
+
+    let done = false;
+    const apply = (visible: boolean) => {
+      if (done) return;
+      if (visible) {
+        setShown(true);
+        if (once) {
+          done = true;
+          cleanup();
         }
-      },
-      // threshold 0 so it resets only when fully out of view, and reveals as soon as any part enters
-      { threshold: 0, rootMargin: "0px 0px 0px 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
+      } else if (!once) {
+        setShown(false);
+      }
+    };
+
+    // Fallback check (also covers programmatic scrolls / anchors / environments
+    // where IntersectionObserver notifications are delayed). Kept synchronous
+    // and cheap: one getBoundingClientRect per element per scroll event.
+    const check = () => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      apply(r.bottom > 0 && r.top < vh && r.right > 0 && r.left < window.innerWidth);
+    };
+
+    let io: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver(([entry]) => apply(entry.isIntersecting), { threshold: 0 });
+      io.observe(el);
+    }
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    window.addEventListener("hashchange", check);
+    check();
+
+    function cleanup() {
+      io?.disconnect();
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+      window.removeEventListener("hashchange", check);
+    }
+    return cleanup;
   }, [once]);
 
   const offset = {

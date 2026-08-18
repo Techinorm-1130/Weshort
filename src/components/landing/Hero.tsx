@@ -9,7 +9,7 @@ import { IMAGES } from "@/lib/constants";
  */
 export default function Hero() {
   return (
-    <section className="relative flex items-center overflow-hidden lg:min-h-[min(100svh,50rem)]">
+    <section className="relative flex flex-1 items-center overflow-hidden">
       {/* poster collage, kept subtle; everything below fades into the page colour */}
       {IMAGES.heroBackground && (
         <Image
@@ -30,9 +30,9 @@ export default function Hero() {
       {/* light shade on the left behind the copy for legibility */}
       <div className="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent" />
       {/* long fade into the page colour — the hero simply dissolves into the page */}
-      <div className="absolute inset-x-0 bottom-0 h-[65%] bg-[linear-gradient(to_bottom,transparent_0%,rgba(4,26,61,0.3)_35%,rgba(4,26,61,0.75)_70%,var(--background)_100%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-[70%] bg-[linear-gradient(to_bottom,transparent_0%,color-mix(in_srgb,var(--background)_35%,transparent)_30%,color-mix(in_srgb,var(--background)_85%,transparent)_62%,var(--background)_82%,var(--background)_100%)]" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 px-6 pb-16 pt-28 sm:gap-14 sm:px-12 sm:pt-32 md:pb-12 lg:grid-cols-[1.15fr_1fr] lg:gap-8">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 px-6 pb-12 pt-28 sm:gap-14 sm:px-12 sm:pt-32 md:pb-8 lg:grid-cols-[1.15fr_1fr] lg:gap-8">
         {/* copy + CTA (staggered entrance) — centred on phones, left-aligned from md up */}
         <div className="mx-auto w-full max-w-xl text-center md:mx-0 md:text-left">
           <h1

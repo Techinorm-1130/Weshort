@@ -46,9 +46,9 @@
 
 /* ---- Weshort theme tokens (deep navy) ---- */
 :root {
-  --background: #041a3d;      /* page navy */
-  --background-dark: #020f26; /* darker navy for gradients / edges */
-  --surface: #082450;         /* cards / panels */
+  --background: #061e47;      /* page navy (a touch lighter than the deep bands) */
+  --background-dark: #020a1c; /* deep blue-black for the Categories / FAQ / footer bands */
+  --surface: #0a2856;         /* cards / panels */
   --foreground: #ffffff;
   --brand: #e50914;           /* red accent */
   --brand-hover: #f6121d;
@@ -102,6 +102,41 @@ body {
   overflow-x: clip;
   /* single continuous page surface — sections are transparent */
   background: var(--background);
+}
+
+/* Full-viewport sections: only one section in view at a time, gentle snap */
+html {
+  scroll-snap-type: y proximity;
+}
+.section-screen {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  scroll-snap-align: start;
+}
+@media (max-width: 767px) {
+  html { scroll-snap-type: none; } /* free scrolling on phones */
+}
+/* Blue-black band used only by the Categories and FAQ screens:
+   starts/ends on the page colour so it blends with neighbouring sections. */
+.section-deep {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    var(--background-dark) 30%,
+    var(--background-dark) 70%,
+    var(--background) 100%
+  );
+}
+/* Same band for the footer, but it stays deep to the end of the page. */
+.section-deep-end {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    var(--background-dark) 35%,
+    var(--background-dark) 100%
+  );
 }
 
 /* Hide the page scrollbar (scrolling still works) */
