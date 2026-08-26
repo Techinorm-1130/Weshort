@@ -1,8 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import LanguageSelect from "@/components/ui/LanguageSelect";
 import Reveal from "@/components/ui/Reveal";
-import { SITE } from "@/lib/constants";
+import { IMAGES, SITE } from "@/lib/constants";
 
 const COLUMNS: { label: string; href: string }[][] = [
   [
@@ -51,36 +52,29 @@ const SOCIALS = [
 ];
 
 /** Large faint outline of the WeShort "W" logomark used as a watermark. */
-function WMark({ className }: { className: string }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 400 300"
-      className={`pointer-events-none absolute text-[#2f5aa8] ${className}`}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinejoin="round"
-    >
-      {/* interlocking double-V, drawn as outlined bands (matches the logo geometry) */}
-      <path d="M20 40 L120 260 L220 40 L190 40 L120 195 L50 40 Z" />
-      <path d="M180 40 L280 260 L380 40 L350 40 L280 195 L210 40 Z" />
-    </svg>
-  );
-}
-
-/** WeShort-style footer: centered logo, watermark W's, link grid, socials + language, legal line. */
+/** WeShort-style footer: centered logo, wordmark watermark, link grid, socials + language, legal line. */
 export default function SiteFooter() {
   return (
     <footer className="section-deep-end relative z-10 w-full shrink-0 overflow-hidden px-6 pb-10 pt-8 text-sm sm:px-12 sm:pt-12">
-      {/* watermarks (desktop only — they'd sit behind the links on phones) */}
-      <WMark className="hidden md:block -left-24 top-6 h-64 w-auto opacity-40 lg:-left-16 lg:h-72" />
-      <WMark className="hidden md:block -right-24 top-6 h-64 w-auto opacity-40 lg:-right-16 lg:h-72" />
+      {/* watermarks, one bleeding off each edge (desktop only — on phones they
+          would sit right behind the link grid) */}
+      {IMAGES.logoWatermark &&
+        (["left-[2%]", "right-[2%]"] as const).map((side) => (
+          <Image
+            key={side}
+            aria-hidden
+            src={IMAGES.logoWatermark as string}
+            alt=""
+            width={IMAGES.logoWatermarkSize.width}
+            height={IMAGES.logoWatermarkSize.height}
+            className={`pointer-events-none absolute top-1/2 hidden w-[26%] max-w-none -translate-y-1/2 select-none opacity-[0.03] md:block ${side}`}
+          />
+        ))}
 
       <div className="relative mx-auto flex max-w-6xl flex-col items-center">
         <Reveal>
           <Link href="/" aria-label={`${SITE.name} home`}>
-            <Logo height={26} />
+            <Logo height={21} />
           </Link>
         </Reveal>
 

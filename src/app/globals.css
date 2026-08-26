@@ -57,7 +57,9 @@
   --input-bg: rgba(8, 36, 80, 0.7);
   --input-border: rgba(148, 163, 184, 0.6);
   --card-bg: rgba(4, 26, 61, 0.82);
-  --font-netflix: "Netflix Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Manrope sits in the chain so the type degrades gracefully while the
+     licensed Netflix Sans files are missing from public/fonts/. */
+  --font-netflix: "Netflix Sans", var(--font-manrope), "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-body: var(--font-manrope), "Manrope", "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -129,6 +131,30 @@ html {
     var(--background) 100%
   );
 }
+/* Same band, but starting from black — used by the screen directly under the
+   black hero so there is no seam where the two meet. */
+.section-deep-from-black {
+  background: linear-gradient(
+    to bottom,
+    #000 0%,
+    var(--background-dark) 26%,
+    var(--background-dark) 70%,
+    var(--background) 100%
+  );
+}
+/* Devices / download / kids screen: blue at the edges so it meets its
+   neighbours cleanly, running to black through the middle. */
+.section-blue-black {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    #04122c 18%,
+    #010509 42%,
+    #010509 58%,
+    #04122c 82%,
+    var(--background) 100%
+  );
+}
 /* Same band for the footer, but it stays deep to the end of the page. */
 .section-deep-end {
   background: linear-gradient(
@@ -190,10 +216,64 @@ body {
 .animate-shimmer   { animation: shimmer 2.2s ease-in-out infinite; }
 .animate-blink     { animation: blink 1.2s ease-in-out infinite; }
 
+/* Hero poster wall: columns drifting in opposite directions, looping seamlessly. */
+@keyframes reel-up {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -50%, 0); }
+}
+@keyframes reel-down {
+  from { transform: translate3d(0, -50%, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+.animate-reel-up   { animation: reel-up 42s linear infinite; will-change: transform; }
+.animate-reel-down { animation: reel-down 52s linear infinite; will-change: transform; }
+
+/* Genre pills: rows sliding sideways, looping seamlessly. */
+@keyframes genre-left {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes genre-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+.animate-genre-left  { animation: genre-left 52s linear infinite; will-change: transform; }
+.animate-genre-right { animation: genre-right 58s linear infinite; will-change: transform; }
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-float, .animate-float-slow, .animate-fade-in, .animate-fade-up, .animate-swoosh {
+  .animate-float, .animate-float-slow, .animate-fade-in, .animate-fade-up, .animate-swoosh,
+  .animate-reel-up, .animate-reel-down, .animate-genre-left, .animate-genre-right {
     animation: none;
   }
+}
+
+/* ---- 35mm film roll (Categories) ---- */
+/* The celluloid itself: near-black stock, a touch warmer at the punched edges. */
+.film-stock {
+  background:
+    linear-gradient(
+      180deg,
+      #0c0e14 0%,
+      #06080e 7%,
+      #03050a 26%,
+      #03050a 74%,
+      #06080e 93%,
+      #0c0e14 100%
+    );
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.65);
+}
+/* Hover a frame and the projector picks it out: the rest of the reel falls back
+   into the dark, so only the frame in the gate is lit. */
+.film-reel:has([data-frame]:hover) [data-frame]:not(:hover) {
+  opacity: 0.32;
+  filter: saturate(0.4) brightness(0.7);
+}
+/* Emulsion grain laid over the whole strip. */
+.film-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
 }
 
 /* soft navy radial glow like the reference swatch */

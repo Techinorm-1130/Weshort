@@ -3,8 +3,13 @@
  * Drop your files into `public/images/...` and update these paths.
  */
 export const IMAGES = {
-  /** Set to null to fall back to the text wordmark. */
-  logo: null as string | null, // e.g. "/images/logo/logo.png"
+  /** Set to null to fall back to the built-in text wordmark. */
+  logo: "/images/logo/weshort-logo.png" as string | null,
+  /** Intrinsic pixel size of that file, so the width scales correctly with the height prop. */
+  logoSize: { width: 2000, height: 213 },
+  /** Transparent white wordmark, used as the footer's background watermark. */
+  logoWatermark: "/images/logo/weshort_horizontal_no-payoff_white-logo[1].png" as string | null,
+  logoWatermarkSize: { width: 537, height: 136 },
   /** Auth pages (login / signup / forgot) background — poster collage. */
   authBackground: "/images/backgrounds/the_netflix_login_bg.jpg" as string | null,
   /** Landing hero background — same collage, rendered at low opacity. */
@@ -30,6 +35,12 @@ const P = {
   o2: "/images/backgrounds/object2.png", // The Day After Tomorrow
   o3: "/images/backgrounds/object3.png", // Uglies
 } as const;
+
+/** Artwork for the hero's tilted poster wall (columns are built by cycling this list). */
+export const HERO_WALL: string[] = [P.p1, P.o1, P.p4, P.p2, P.o2, P.p3, P.o3];
+
+/** Small circular avatars in the hero's social-proof pill. */
+export const HERO_AVATARS: string[] = [P.p4, P.o1, P.p2];
 
 /**
  * "Explore our wide variety of categories" carousel.

@@ -13,78 +13,162 @@ const PLACEHOLDERS = [
   ["#5b2a6b", "#1a0a20"],
 ];
 
-/** One film frame. */
+/** Copies of the genre list laid end-to-end so the roll can run forever. */
+const COPIES = 3;
+/** Idle roll speed, px per second. */
+const SPEED = 16;
+/**
+ * One cell of the roll: a single poster, the frame line, keycode edge marking
+ * and — on hover — the projector treatment (the rest of the reel dims, this
+ * frame lifts into the light with gate marks and a sweep across the emulsion).
+ */
 function Frame({ item, index }: { item: (typeof CATEGORIES)[number]; index: number }) {
+  const src = item.posters.find(Boolean) ?? null;
+  const [from, to] = PLACEHOLDERS[index % PLACEHOLDERS.length];
+  const no = String(index + 1).padStart(2, "0");
+
   return (
     <Link
       href={item.href}
       data-frame
-      className="group relative flex w-[11rem] shrink-0 snap-start flex-col bg-[#0b1224] p-2.5 transition duration-300 hover:bg-[#0f1a33] sm:w-[12rem] lg:w-[12.5rem]"
+      data-index={index}
+      className="group relative flex w-[9.75rem] shrink-0 flex-col px-[5px] transition-[opacity,filter,transform] duration-500 ease-out hover:z-20 sm:w-[11rem] lg:w-[11.75rem]"
     >
-      {/* subtle inner frame line like a film cell */}
-      <span aria-hidden className="pointer-events-none absolute inset-1.5 rounded-sm border border-white/[0.06]" />
+      {/* frame line — the hairline that separates two cells on real stock */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-2 left-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent"
+      />
 
-      <div className="relative">
-        <div className="grid grid-cols-2 gap-1.5">
-          {item.posters.slice(0, 4).map((src, i) => {
-            const [from, to] = PLACEHOLDERS[(index + i) % PLACEHOLDERS.length];
-            return (
-              <div
-                key={i}
-                className="relative aspect-[0.9] overflow-hidden rounded-[3px]"
-                style={{ background: src ? "transparent" : `linear-gradient(160deg, ${from}, ${to})` }}
-              >
-                {src ? (
-                  <Image src={src} alt="" fill sizes="120px" className="object-cover transition duration-500 group-hover:scale-105" />
-                ) : (
-                  <span className="absolute left-1.5 top-1.5 text-xs font-black text-brand">W</span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-[#0b1224]/90 via-[#0b1224]/40 to-transparent group-hover:from-[#0f1a33]/90 group-hover:via-[#0f1a33]/40" />
-      </div>
+      {/* keycode / edge marking above the cell */}
+      <span className="mb-1.5 flex items-center justify-between font-mono text-[8px] uppercase leading-none tracking-[0.18em] text-[#d9c08a]/45 transition-colors duration-300 group-hover:text-[#d9c08a]/85">
+        <span>WS·{no}A</span>
+        <span className="tracking-normal">▸▸</span>
+      </span>
 
-      <div className="mt-2 flex items-center justify-between">
-        <span className="text-[13px] font-medium">{item.name}</span>
-        <svg
-          viewBox="0 0 24 24"
-          className="h-4 w-4 text-white transition group-hover:translate-x-1"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {/* the exposed frame — lifts into the light on hover */}
+      <div
+        className="relative aspect-[2/3] w-full overflow-hidden rounded-[2px] ring-1 ring-white/10 transition-[transform,box-shadow,--tw-ring-color] duration-[600ms] ease-out group-hover:-translate-y-[5px] group-hover:shadow-[0_18px_38px_-12px_rgba(0,0,0,0.9),0_0_26px_-4px_rgba(217,192,138,0.45)] group-hover:ring-[#d9c08a]/55"
+        style={{ background: src ? "#04060b" : `linear-gradient(160deg, ${from}, ${to})` }}
+      >
+        {src ? (
+          <Image
+            src={src}
+            alt={item.name}
+            fill
+            sizes="(max-width: 640px) 40vw, 190px"
+            className="object-cover brightness-[0.82] saturate-[0.85] transition duration-[900ms] ease-out group-hover:scale-[1.07] group-hover:brightness-105 group-hover:saturate-100"
+          />
+        ) : (
+          <span className="absolute left-2 top-2 text-sm font-black text-brand">W</span>
+        )}
+
+        {/* vignette + floor so the caption always reads */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(120% 90% at 50% 30%, transparent 40%, rgba(0,0,0,0.55) 100%), linear-gradient(to top, rgba(2,6,16,0.95) 0%, rgba(2,6,16,0.45) 26%, transparent 55%)",
+          }}
+        />
+
+        {/* gate marks — the registration brackets of a projector gate close in on hover */}
+        {[
+          "left-2 top-2 border-l border-t -translate-x-1 -translate-y-1",
+          "right-2 top-2 border-r border-t translate-x-1 -translate-y-1",
+          "left-2 bottom-2 border-l border-b -translate-x-1 translate-y-1",
+          "right-2 bottom-2 border-r border-b translate-x-1 translate-y-1",
+        ].map((pos) => (
+          <span
+            key={pos}
+            aria-hidden
+            className={`pointer-events-none absolute h-3.5 w-3.5 border-[#d9c08a]/80 opacity-0 transition duration-500 ease-out group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 ${pos}`}
+          />
+        ))}
+
+        {/* light sweeps across the emulsion once, as the frame enters the gate */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/2 -translate-x-[220%] skew-x-[-18deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.16),transparent)] transition-transform duration-[1100ms] ease-out group-hover:translate-x-[420%]"
+        />
+
+        {/* gold play seal on hover */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-[42%] flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 scale-75 items-center justify-center rounded-full border border-[#d9c08a]/70 bg-black/35 opacity-0 shadow-[0_0_20px_-4px_rgba(217,192,138,0.6)] backdrop-blur-sm transition duration-500 group-hover:scale-100 group-hover:opacity-100"
         >
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
+          <svg viewBox="0 0 24 24" className="ml-[2px] h-4 w-4 fill-[#d9c08a]">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </span>
+
+        {/* caption inside the frame */}
+        <span className="absolute inset-x-2.5 bottom-2.5">
+          <span className="block h-px w-6 bg-[#d9c08a]/70 transition-all duration-500 group-hover:w-full" />
+          <span className="mt-1.5 flex items-center justify-between">
+            <span className="text-[12.5px] font-medium leading-none tracking-wide text-white">
+              {item.name}
+            </span>
+            <svg
+              viewBox="0 0 24 24"
+              className="h-3.5 w-3.5 -translate-x-1 text-[#d9c08a] opacity-0 transition duration-500 group-hover:translate-x-0 group-hover:opacity-100"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </span>
+        </span>
       </div>
+
+      {/* frame counter below the cell */}
+      <span className="mt-1.5 font-mono text-[8px] uppercase leading-none tracking-[0.18em] text-white/20 transition-colors duration-300 group-hover:text-white/45">
+        FRAME {no}
+      </span>
     </Link>
   );
 }
 
-/** Row of sprocket holes; absolutely positioned so it's clipped to the frames' width. */
-function Sprockets({ position }: { position: "top" | "bottom" }) {
+/** Punched sprocket rail (top or bottom edge of the stock). */
+function Rail({ position }: { position: "top" | "bottom" }) {
   return (
     <div
       aria-hidden
-      className={`pointer-events-none absolute inset-x-0 flex h-4 items-center gap-[12px] overflow-hidden px-2 ${
+      className={`pointer-events-none absolute inset-x-0 flex h-6 items-center gap-[14px] overflow-hidden px-3 ${
         position === "top" ? "top-0" : "bottom-0"
       }`}
     >
-      {Array.from({ length: 200 }).map((_, i) => (
-        <span key={i} className="h-2 w-3.5 shrink-0 rounded-[2px] bg-[#e9e4d6] shadow-[inset_0_1px_1px_rgba(0,0,0,0.6)]" />
+      {/* hairline where the rail meets the frames */}
+      <span
+        className={`absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-[#d9c08a]/20 to-transparent ${
+          position === "top" ? "bottom-0" : "top-0"
+        }`}
+      />
+      {Array.from({ length: 240 }).map((_, i) => (
+        <span
+          key={i}
+          className="h-[9px] w-[15px] shrink-0 rounded-[2px]"
+          style={{
+            background: "linear-gradient(180deg,#f2ece0 0%,#d8d0be 55%,#b9b1a0 100%)",
+            boxShadow:
+              "inset 0 1px 1px rgba(0,0,0,0.45), inset 0 -1px 0 rgba(255,255,255,0.35), 0 0 6px rgba(217,192,138,0.12)",
+          }}
+        />
       ))}
     </div>
   );
 }
 
-/** "Explore our wide variety of categories" — full-bleed filmstrip carousel (drag / swipe to explore). */
+/** "Explore our wide variety of categories" — a premium 35mm roll that runs by itself (drag to scrub). */
 export default function Categories() {
   const trackRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
   const [dragging, setDragging] = useState(false);
-  const [range, setRange] = useState<[number, number]>([0, 0]); // visible frame indexes (inclusive)
+  const [range, setRange] = useState<[number, number]>([0, 0]); // visible genre indexes (inclusive, may wrap)
 
   const measure = useCallback(() => {
     const el = trackRef.current;
@@ -92,10 +176,14 @@ export default function Categories() {
     const frames = el.querySelectorAll<HTMLElement>("[data-frame]");
     const left = el.scrollLeft, right = left + el.clientWidth;
     let first = -1, last = -1;
-    frames.forEach((f, i) => {
+    frames.forEach((f) => {
       const a = f.offsetLeft, b = a + f.offsetWidth;
       const visible = Math.min(b, right) - Math.max(a, left) > f.offsetWidth * 0.5; // >50% in view
-      if (visible) { if (first < 0) first = i; last = i; }
+      if (visible) {
+        const idx = Number(f.dataset.index ?? 0);
+        if (first < 0) first = idx;
+        last = idx;
+      }
     });
     if (first < 0) { first = 0; last = 0; }
     setRange([first, last]);
@@ -113,7 +201,40 @@ export default function Categories() {
     };
   }, [measure]);
 
-  // mouse drag-to-scroll (touch already scrolls natively)
+  // the roll: drifts on its own, wraps seamlessly, pauses on hover / drag / hidden tab
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const setWidth = () => el.scrollWidth / COPIES;
+    el.scrollLeft = setWidth(); // start inside the middle copy so it scrubs both ways
+
+    let raf = 0, last = 0;
+    const step = (t: number) => {
+      raf = requestAnimationFrame(step);
+      const w = setWidth();
+      if (w <= 0) { last = t; return; }
+      if (last && !pausedRef.current && !reduce && !document.hidden) {
+        el.scrollLeft += (SPEED * Math.min(t - last, 64)) / 1000;
+      }
+      last = t;
+      if (el.scrollLeft > w * 1.5) el.scrollLeft -= w;
+      else if (el.scrollLeft < w * 0.5) el.scrollLeft += w;
+    };
+    raf = requestAnimationFrame(step);
+
+    const hold = () => { pausedRef.current = true; };
+    const release = () => { pausedRef.current = false; };
+    el.addEventListener("pointerenter", hold);
+    el.addEventListener("pointerleave", release);
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("pointerenter", hold);
+      el.removeEventListener("pointerleave", release);
+    };
+  }, []);
+
+  // mouse drag-to-scrub (touch already scrolls natively)
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
@@ -153,19 +274,22 @@ export default function Categories() {
     };
   }, []);
 
+  const reel = Array.from({ length: COPIES }).flatMap((_, c) =>
+    CATEGORIES.map((item, i) => ({ item, i, key: `${c}-${item.name}` })),
+  );
+
   return (
     <section className="w-full py-8 sm:py-10">
-      {/* header — left aligned to the page edge (same gutter as the strip's first frame) */}
+      {/* header — centered title card */}
       <div className="w-full px-6 sm:px-12">
-        {/* centered title-card header */}
         <Reveal className="mx-auto max-w-2xl text-center">
           <div className="flex items-center justify-center gap-4">
-            <span className="h-px w-12 bg-gradient-to-r from-transparent to-white/30" />
+            <span className="h-px w-12 bg-gradient-to-r from-transparent to-[#d9c08a]/40" />
             <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/60">
               <span className="h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(229,9,20,0.9)]" />
               Now showing · {String(CATEGORIES.length).padStart(2, "0")} genres
             </span>
-            <span className="h-px w-12 bg-gradient-to-l from-transparent to-white/30" />
+            <span className="h-px w-12 bg-gradient-to-l from-transparent to-[#d9c08a]/40" />
           </div>
           <h2 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-[2.6rem]">
             Explore our wide variety of categories
@@ -177,46 +301,67 @@ export default function Categories() {
         </Reveal>
       </div>
 
-      {/* filmstrip — full bleed, edge to edge */}
-      <Reveal delay={120} distance={36} className="relative mt-8 w-full">
+      {/* the roll — full bleed, edge to edge */}
+      <Reveal delay={120} distance={36} className="relative mt-9 w-full">
+        {/* gold hairlines above / below the stock */}
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-gradient-to-r from-transparent via-[#d9c08a]/35 to-transparent" />
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-px bg-gradient-to-r from-transparent via-[#d9c08a]/35 to-transparent" />
+
         <div
           ref={trackRef}
-          className={`w-full snap-x snap-proximity overflow-x-auto bg-[#05070d] shadow-[0_30px_80px_rgba(0,0,0,0.6)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+          className={`film-stock w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
             dragging ? "cursor-grabbing select-none [&_a]:pointer-events-none" : "cursor-grab"
           }`}
         >
-          {/* width is defined by the frames; sprockets are clipped to it */}
-          <div className="relative w-max min-w-full py-5">
-            <Sprockets position="top" />
-            <div className="flex gap-2">
-              {CATEGORIES.map((c, i) => (
-                <Frame key={c.name} item={c} index={i} />
+          {/* width is defined by the frames; the rails are clipped to it */}
+          <div className="relative w-max min-w-full py-9">
+            <Rail position="top" />
+            <div className="film-reel flex">
+              {reel.map(({ item, i, key }) => (
+                <Frame key={key} item={item} index={i} />
               ))}
             </div>
-            <Sprockets position="bottom" />
+            <Rail position="bottom" />
           </div>
         </div>
 
-        {/* film mini-map: one cell per genre, lit when in view + frame readout */}
-        <div className="mt-5 flex items-center justify-center gap-4">
-          <div className="flex items-center gap-1 rounded-md border border-white/10 bg-black/40 px-1.5 py-1">
+        {/* emulsion grain + the curve of the celluloid */}
+        <span aria-hidden className="film-grain pointer-events-none absolute inset-0 z-10" />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-10"
+          style={{
+            boxShadow:
+              "inset 0 22px 34px -22px rgba(0,0,0,0.95), inset 0 -22px 34px -22px rgba(0,0,0,0.95)",
+            background:
+              "linear-gradient(100deg, transparent 34%, rgba(255,255,255,0.045) 48%, transparent 62%)",
+          }}
+        />
+        {/* the roll runs off into the dark on both sides */}
+        <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#020a1c] to-transparent sm:w-28" />
+        <span aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#020a1c] to-transparent sm:w-28" />
+
+        {/* reel readout: one cell per genre, lit when in view */}
+        <div className="mt-6 flex items-center justify-center gap-4">
+          <div className="flex items-center gap-1 rounded-md border border-[#d9c08a]/20 bg-black/40 px-1.5 py-1">
             {CATEGORIES.map((c, i) => {
-              const on = i >= range[0] && i <= range[1];
+              const on =
+                range[0] <= range[1]
+                  ? i >= range[0] && i <= range[1]
+                  : i >= range[0] || i <= range[1];
               return (
                 <span
                   key={c.name}
                   title={c.name}
                   className={`h-2.5 w-4 rounded-[2px] transition-colors duration-200 ${
-                    on ? "bg-white/85 shadow-[0_0_6px_rgba(255,255,255,0.5)]" : "bg-white/15"
+                    on ? "bg-[#d9c08a] shadow-[0_0_8px_rgba(217,192,138,0.55)]" : "bg-white/15"
                   }`}
                 />
               );
             })}
           </div>
-          <span className="text-[11px] uppercase tracking-[0.22em] text-white/50 tabular-nums">
-            Frame <span className="text-white/90">{String(range[0] + 1).padStart(2, "0")}–{String(range[1] + 1).padStart(2, "0")}</span>
-            <span className="text-white/30"> / </span>
-            {String(CATEGORIES.length).padStart(2, "0")}
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/45 tabular-nums">
+            35mm · <span className="text-[#d9c08a]/80">Premium</span> reel
           </span>
         </div>
       </Reveal>

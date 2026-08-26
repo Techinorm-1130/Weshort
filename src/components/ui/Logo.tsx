@@ -3,7 +3,7 @@ import { IMAGES } from "@/lib/constants";
 
 type Props = {
   className?: string;
-  /** Height of the logo in px (width scales). Default 32. */
+  /** Height of the logo in px (width scales). Default 26. */
   height?: number;
 };
 
@@ -11,13 +11,14 @@ type Props = {
  * WeShort logo: red interlocking "W" mark + "WeShort" wordmark.
  * If `IMAGES.logo` is set (a real PNG/SVG in public/images/logo/), that file is used instead.
  */
-export default function Logo({ className = "", height = 32 }: Props) {
+export default function Logo({ className = "", height = 26 }: Props) {
   if (IMAGES.logo) {
+    const ratio = IMAGES.logoSize.width / IMAGES.logoSize.height;
     return (
       <Image
         src={IMAGES.logo}
         alt="WeShort"
-        width={Math.round(height * 3.9)}
+        width={Math.round(height * ratio)}
         height={height}
         priority
         className={className}
