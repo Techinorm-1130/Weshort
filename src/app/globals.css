@@ -240,11 +240,53 @@ body {
 .animate-genre-left  { animation: genre-left 52s linear infinite; will-change: transform; }
 .animate-genre-right { animation: genre-right 58s linear infinite; will-change: transform; }
 
+/* ---- live device screens (Devices section) ----
+   The mock TV / tablet / laptop / phone screens play by themselves: stills
+   crossfade like a trailer reel, poster rails slide, the playback bar fills. */
+
+/* 3-up crossfade. Each slide runs the same 13.5s cycle with a -4.5s stagger. */
+@keyframes ws-slide {
+  0%, 28%  { opacity: 1; }
+  38%, 95% { opacity: 0; }
+  100%     { opacity: 1; }
+}
+/* Slow Ken Burns push on the still underneath. */
+@keyframes ws-zoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.12); }
+}
+/* Poster rails sliding sideways / the phone grid drifting up, both seamless
+   (the track holds the same items twice, so -50% lands back on the start). */
+@keyframes ws-rail {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes ws-rail-y {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -50%, 0); }
+}
+/* Playback bar under the hero, in step with the slide cycle. */
+@keyframes ws-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.animate-ws-slide     { animation: ws-slide 13.5s ease-in-out infinite; will-change: opacity; }
+.animate-ws-zoom      { animation: ws-zoom 13.5s ease-in-out infinite alternate; will-change: transform; }
+.animate-ws-rail      { animation: ws-rail 30s linear infinite; will-change: transform; }
+.animate-ws-rail-rev  { animation: ws-rail 38s linear infinite reverse; will-change: transform; }
+.animate-ws-rail-y    { animation: ws-rail-y 24s linear infinite; will-change: transform; }
+.animate-ws-progress  { animation: ws-progress 13.5s linear infinite; transform-origin: left center; }
+
 @media (prefers-reduced-motion: reduce) {
   .animate-float, .animate-float-slow, .animate-fade-in, .animate-fade-up, .animate-swoosh,
-  .animate-reel-up, .animate-reel-down, .animate-genre-left, .animate-genre-right {
+  .animate-reel-up, .animate-reel-down, .animate-genre-left, .animate-genre-right,
+  .animate-ws-slide, .animate-ws-zoom, .animate-ws-rail, .animate-ws-rail-rev,
+  .animate-ws-rail-y, .animate-ws-progress {
     animation: none;
   }
+  /* first slide stays visible when the crossfade is switched off */
+  .animate-ws-slide { opacity: 0; }
+  .animate-ws-slide:first-of-type { opacity: 1; }
 }
 
 /* ---- 35mm film roll (Categories) ---- */

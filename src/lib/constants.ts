@@ -59,12 +59,11 @@ export const CATEGORIES: { name: string; href: string; posters: (string | null)[
 ];
 
 /**
- * Feature rows (devices / download / kids). Drop real illustrations into
+ * Feature illustrations (devices / kids). Drop real illustrations into
  * `public/images/features/` and set the paths; null = built-in CSS mockup.
  */
 export const FEATURE_IMAGES = {
   devices: null as string | null, // e.g. "/images/features/devices.png"
-  download: null as string | null,
   kids: null as string | null,
 } as const;
 

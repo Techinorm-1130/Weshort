@@ -3,7 +3,8 @@ import Hero from "@/components/landing/Hero";
 import MoreReasons from "@/components/landing/MoreReasons";
 import Categories from "@/components/landing/Categories";
 import GenreSearch from "@/components/landing/GenreSearch";
-import Features from "@/components/landing/Features";
+import Devices from "@/components/landing/Devices";
+import Kids from "@/components/landing/Kids";
 import Faq from "@/components/landing/Faq";
 import Plans from "@/components/landing/Plans";
 import TrialBanner from "@/components/landing/TrialBanner";
@@ -30,9 +31,12 @@ export default function Home() {
         >
           <Categories />
         </div>
-        {/* devices / download / kids grouped in one section (taller than a screen, scrolls freely) */}
-        <div id="features" className="section-screen section-blue-black">
-          <Features />
+        {/* devices + kids share one band, taller than a screen: only the devices
+            block is a snap target (so it always lands clear of the fixed navbar),
+            then you scroll on freely to the kids block below it */}
+        <div id="features" className="section-blue-black scroll-mt-24 pb-16 sm:pb-24">
+          <Devices />
+          <Kids />
         </div>
         <div id="genres" className="section-screen">
           <GenreSearch />
