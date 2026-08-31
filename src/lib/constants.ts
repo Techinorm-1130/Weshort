@@ -1,4 +1,19 @@
 /**
+ * sessionStorage key marking that the logo opener has already played in this tab.
+ * Lives here (not in IntroSplash) so the server-rendered inline script in
+ * layout.tsx can read it — values exported from a "use client" module are only
+ * client references on the server.
+ */
+export const INTRO_SEEN_KEY = "ws-intro-seen";
+
+/**
+ * false = the logo opener plays on every page load (what you want while judging
+ * the animation). true = it plays only on the first load of each browser tab,
+ * which is the friendlier setting for a live site — returning visitors skip it.
+ */
+export const INTRO_ONCE_PER_TAB = false;
+
+/**
  * Central place for static asset paths.
  * Drop your files into `public/images/...` and update these paths.
  */

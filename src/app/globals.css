@@ -333,3 +333,126 @@ h6,
 .font-display {
   font-family: var(--font-netflix);
 }
+
+/* ---- intro splash: logo opener before the page (see IntroSplash.tsx) ----
+   A 6s timeline, pure CSS so it starts on the very first paint; the component
+   only removes the node once it has run.
+
+   The moves themselves are slow — the point is to watch the entry happen, not
+   to stare at a finished logo — and the phases are serial, so the page is never
+   revealed underneath a still-running entry:
+     0.0-2.7s   bloom swells and the logo drifts slowly into focus
+     2.4-3.7s   red rule draws out beneath it
+     2.8-4.2s   highlight sweeps slowly across the wordmark
+     4.2-4.9s   hold on the finished lockup
+     4.9-5.4s   the lockup fades out — entry complete
+     5.6-6.0s   the overlay fades, handing over to the landing page
+   Keep DURATION in IntroSplash.tsx in step with the 6s below. */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #000;
+  animation: intro-out 6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+/* set before paint by the inline script in layout.tsx on repeat loads */
+html.intro-seen .intro { display: none; }
+/* no scrolling the page behind the opener */
+html.intro-playing,
+html.intro-playing body { overflow: hidden; }
+
+/* stays black until the entry has finished, then reveals the page */
+@keyframes intro-out {
+  0%, 94% { opacity: 1; visibility: visible; }
+  100%    { opacity: 0; visibility: hidden; }
+}
+
+/* red bloom rising slowly behind the mark */
+.intro-glow {
+  position: absolute;
+  height: 78vmax;
+  width: 78vmax;
+  border-radius: 9999px;
+  filter: blur(50px);
+  background: radial-gradient(
+    circle,
+    rgba(229, 9, 20, 0.4) 0%,
+    rgba(229, 9, 20, 0.14) 34%,
+    transparent 68%
+  );
+  animation: intro-glow 6s ease-in-out forwards;
+}
+@keyframes intro-glow {
+  0%        { opacity: 0; transform: scale(0.5); }
+  20%       { opacity: 0.55; transform: scale(0.78); }
+  45%       { opacity: 0.75; transform: scale(0.95); }
+  70%       { opacity: 0.6; transform: scale(1.02); }
+  82%       { opacity: 0.68; transform: scale(1.05); }
+  90%, 100% { opacity: 0; transform: scale(1.12); }
+}
+
+/* the logo drifting into focus over ~2.7s — the slowest move of the entry */
+.intro-logo {
+  position: relative;
+  width: min(560px, 74vw);
+  overflow: hidden;
+  animation: intro-logo 6s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+}
+@keyframes intro-logo {
+  0%        { opacity: 0; transform: scale(1.22); filter: blur(18px); }
+  12%       { opacity: 0.5; }
+  28%       { opacity: 0.9; transform: scale(1.1); filter: blur(7px); }
+  45%       { opacity: 1; transform: scale(1); filter: blur(0); }
+  82%       { opacity: 1; transform: scale(1); filter: blur(0); }
+  90%, 100% { opacity: 0; transform: scale(1.05); filter: blur(3px); }
+}
+
+/* highlight travelling slowly across the wordmark once it is sharp */
+.intro-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 34%, rgba(255, 255, 255, 0.7) 50%, transparent 66%);
+  animation: intro-shine 6s ease-in-out forwards;
+}
+@keyframes intro-shine {
+  0%, 46% { opacity: 0; transform: translateX(-130%); }
+  52%     { opacity: 0.85; }
+  62%     { opacity: 0.85; }
+  70%     { opacity: 0; transform: translateX(130%); }
+  100%    { opacity: 0; transform: translateX(130%); }
+}
+
+/* thin red rule drawing out beneath the logo, then holding */
+.intro-line {
+  position: absolute;
+  height: 2px;
+  width: min(560px, 74vw);
+  margin-top: 15vh;
+  transform-origin: center;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, #e50914 22%, #ff5a63 50%, #e50914 78%, transparent);
+  box-shadow: 0 0 18px rgba(229, 9, 20, 0.8);
+  animation: intro-line 6s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+}
+@keyframes intro-line {
+  0%, 40%   { opacity: 0; transform: scaleX(0); }
+  46%       { opacity: 1; }
+  62%       { opacity: 1; transform: scaleX(1); }
+  84%       { opacity: 1; transform: scaleX(1); }
+  90%, 100% { opacity: 0; transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro,
+  .intro-glow,
+  .intro-logo,
+  .intro-shine,
+  .intro-line { animation: none; }
+  .intro-shine,
+  .intro-line { opacity: 0; }
+  .intro-glow { opacity: 0.5; }
+  .intro-logo { opacity: 1; filter: none; }
+}
