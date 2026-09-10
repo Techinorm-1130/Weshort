@@ -38,6 +38,24 @@ const VIDEO_STATE_LABEL: Record<UploadState, string> = {
   failed: "Failed",
 };
 
+/** Whether the visitor has asked the system for less movement. */
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/**
+ * Back to the top of the page.
+ *
+ * For when the whole view is replaced rather than swapped step for step — the
+ * page keeps its scroll position through that, so a confirmation that replaces
+ * a long form opens somewhere below the fold.
+ */
+const scrollToTop = () => {
+  if (typeof window === "undefined") return;
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+};
+
 /**
  * The review step, grouped the way the form asked for it — so what is being
  * sent reads back in the same order it was filled in.
@@ -151,12 +169,22 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
     // the step heading underneath it.
     const HEADER = 112;
     const top = el.getBoundingClientRect().top + window.scrollY - HEADER;
-    const reduced =
-      typeof window.matchMedia === "function" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    window.scrollTo({ top: Math.max(0, top), behavior: reduced ? "auto" : "smooth" });
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+    });
   };
+
+  /**
+   * Sending replaces the form outright rather than moving between steps, so it
+   * never passes through `goToStep`. Without this the confirmation opened at
+   * whatever depth the review step had been left at — which is the very bottom,
+   * since that is where the Submit button lives.
+   */
+  useEffect(() => {
+    if (sent) scrollToTop();
+  }, [sent]);
 
   const errors = useMemo(() => validate(draft, agreed), [draft, agreed]);
   const visible = touched.includes(step) || step === STEPS.length - 1 ? errorsForStep(errors, step) : {};
