@@ -17,7 +17,7 @@
  * ------------------------------------------------------------------------ */
 
 import type { UploadAsset, UploadConfig, UploadMedia } from "@/types/upload";
-import { extensionOf } from "@/lib/upload-meta";
+import { extensionOf, formatBytes } from "@/lib/upload-meta";
 
 /** Mirrors the admin's defaults in src/server/uploads/store.ts. */
 const CONFIG: UploadConfig = {
@@ -101,7 +101,7 @@ export function mockCreate(input: {
   if (input.sizeBytes <= 0) throw new Error("The file is empty");
   if (input.sizeBytes > CONFIG.maxSizeBytes) {
     throw new Error(
-      `The file is larger than the ${Math.round(CONFIG.maxSizeBytes / 1024 ** 3)} GB limit`,
+      `The file is larger than the ${formatBytes(CONFIG.maxSizeBytes)} limit`,
     );
   }
 
