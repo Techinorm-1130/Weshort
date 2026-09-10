@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...and this one is opted in: it holds no secret, only the address of the
+# dashboard a deployment sends submissions to.
+!.env.production
 
 # vercel
 .vercel

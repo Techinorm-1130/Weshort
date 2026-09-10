@@ -53,7 +53,7 @@ const prefersReducedMotion = () =>
  */
 const scrollToTop = () => {
   if (typeof window === "undefined") return;
-  window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+  window.scrollTo({ top: 0, behavior: "auto" });
 };
 
 /**
@@ -177,13 +177,18 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
   };
 
   /**
-   * Sending replaces the form outright rather than moving between steps, so it
-   * never passes through `goToStep`. Without this the confirmation opened at
-   * whatever depth the review step had been left at — which is the very bottom,
-   * since that is where the Submit button lives.
+   * A safety net for the scroll done in `submit()`.
+   *
+   * Replacing the form costs the page most of its height, and the browser
+   * re-anchors the scroll position when that much content disappears. Landing
+   * back at the top has to survive that, so it is asked for again once the
+   * confirmation is on screen — instantly, because a smooth scroll starting
+   * from a position that no longer exists does not reliably arrive.
    */
   useEffect(() => {
-    if (sent) scrollToTop();
+    if (!sent || typeof window === "undefined") return;
+    const settle = requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
+    return () => cancelAnimationFrame(settle);
   }, [sent]);
 
   const errors = useMemo(() => validate(draft, agreed), [draft, agreed]);
@@ -234,7 +239,13 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
       return;
     }
     const done = await send.run(saved.id);
-    if (done) setSent(done);
+    if (!done) return;
+
+    // Go to the top while the form is still standing. Scrolling first and
+    // swapping second means there is no tall page to fall back down through —
+    // the confirmation simply appears where the eye already is.
+    scrollToTop();
+    setSent(done);
   }
 
   if (sent) {
