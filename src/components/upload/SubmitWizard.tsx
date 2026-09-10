@@ -13,6 +13,7 @@ import {
 import { ChipSelect, Field, Segmented, Select, TextArea, TextInput, Toggle } from "./form/Fields";
 import { ImageDrop, SubtitleList, VideoUploader } from "./form/MediaFields";
 import SubmitPreview from "./SubmitPreview";
+import Poster from "@/components/ui/Poster";
 
 const STEPS = [
   { label: "The film", hint: "Title, description, genre" },
@@ -244,8 +245,6 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
   }
 
   const tx = taxonomies;
-  /** Only a real URL renders; a leftover blob: one resolves nowhere. */
-  const poster = draft.poster && !draft.poster.startsWith("blob:") ? draft.poster : null;
 
   const current = STEPS[step];
 
@@ -563,15 +562,16 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
             {/* the title, as it will read on the record */}
             <div className="flex flex-wrap items-start gap-5 rounded-lg border border-white/10 bg-white/[0.03] p-5">
               <div className="flex h-[6.5rem] w-[4.4rem] shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/10 bg-white/[0.04]">
-                {poster ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={poster} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  <svg viewBox="0 0 24 24" className="h-5 w-5 text-white/20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="4" width="18" height="16" rx="2" />
-                    <path d="m4 16 5-5 4 4 3-3 4 4" />
-                  </svg>
-                )}
+                <Poster
+                  src={draft.poster}
+                  className="h-full w-full object-cover"
+                  fallback={
+                    <svg viewBox="0 0 24 24" className="h-5 w-5 text-white/20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="16" rx="2" />
+                      <path d="m4 16 5-5 4 4 3-3 4 4" />
+                    </svg>
+                  }
+                />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-brand">

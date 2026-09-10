@@ -7,6 +7,7 @@ import { ROUTES } from "@/lib/constants";
 import { signOut, updateAccount, useSession, type Account } from "@/lib/session";
 import type { ApprovalState, ContentItem, SubmitterKind } from "@/types/upload";
 import { Field, Segmented, TextInput } from "@/components/upload/form/Fields";
+import Poster from "@/components/ui/Poster";
 
 const KIND_LABEL: Record<SubmitterKind, string> = {
   producer: "Producer",
@@ -40,23 +41,20 @@ function Stat({ label, value }: { label: string; value: number | string }) {
 
 function SubmissionRow({ item }: { item: ContentItem }) {
   const state = APPROVAL[item.approval.state] ?? APPROVAL.draft;
-  // Submissions made before artwork was uploaded properly hold a `blob:` URL,
-  // which resolves nowhere now. Show the placeholder rather than a broken image.
-  const poster = item.poster && !item.poster.startsWith("blob:") ? item.poster : null;
 
   return (
     <li className="flex flex-wrap items-center gap-4 border-b border-white/[0.07] py-4 last:border-0">
       <div className="flex h-16 w-11 shrink-0 items-center justify-center overflow-hidden rounded border border-white/10 bg-white/[0.04]">
-        {poster ? (
-          // served by the uploads API, so next/image has nothing to add here
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={poster} alt="" className="h-full w-full object-cover" />
-        ) : (
-          <svg viewBox="0 0 24 24" className="h-4 w-4 text-white/25" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="16" rx="2" />
-            <path d="m4 16 5-5 4 4 3-3 4 4" />
-          </svg>
-        )}
+        <Poster
+          src={item.poster}
+          className="h-full w-full object-cover"
+          fallback={
+            <svg viewBox="0 0 24 24" className="h-4 w-4 text-white/25" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="m4 16 5-5 4 4 3-3 4 4" />
+            </svg>
+          }
+        />
       </div>
 
       <div className="min-w-0 flex-1">

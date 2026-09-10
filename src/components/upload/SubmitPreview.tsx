@@ -2,6 +2,7 @@
 
 import type { ContentItem, Taxonomies } from "@/types/upload";
 import { formatDuration } from "@/lib/upload-meta";
+import Poster from "@/components/ui/Poster";
 
 /** Turns a stored code back into the word the person picked. */
 const labelOf = (options: { value: string; label: string }[] | undefined, value: string) =>
@@ -27,9 +28,6 @@ export default function SubmitPreview({
   draft: ContentItem;
   taxonomies: Taxonomies | null;
 }) {
-  // A leftover object URL resolves nowhere; treat it as no poster at all.
-  const poster = draft.poster && !draft.poster.startsWith("blob:") ? draft.poster : null;
-
   const meta = [
     TYPE_LABEL[draft.type],
     draft.releaseDate ? draft.releaseDate.slice(0, 4) : "",
@@ -55,20 +53,20 @@ export default function SubmitPreview({
       <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_40px_80px_-40px_rgba(0,0,0,1)]">
         {/* poster */}
         <div className="relative aspect-[2/3] w-full overflow-hidden bg-white/[0.03]">
-          {poster ? (
-            // served by the uploads API; next/image adds nothing over a remote URL here
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={poster} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-white/15">
-              <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="4" width="18" height="16" rx="2" />
-                <path d="m4 16 5-5 4 4 3-3 4 4" />
-                <circle cx="9" cy="9" r="1.2" />
-              </svg>
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Poster</span>
-            </div>
-          )}
+          <Poster
+            src={draft.poster}
+            className="h-full w-full object-cover"
+            fallback={
+              <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-white/15">
+                <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="16" rx="2" />
+                  <path d="m4 16 5-5 4 4 3-3 4 4" />
+                  <circle cx="9" cy="9" r="1.2" />
+                </svg>
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Poster</span>
+              </div>
+            }
+          />
 
           {/* the play affordance only makes sense once there is a film behind it */}
           {ready && (
