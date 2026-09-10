@@ -86,17 +86,19 @@ export function fileProblem(file: File, config: UploadConfig | null): string | n
   }
   if (file.size === 0) return "That file is empty.";
   if (config && file.size > config.maxSizeBytes) {
-    const gb = (config.maxSizeBytes / 1024 ** 3).toFixed(
-      config.maxSizeBytes % 1024 ** 3 === 0 ? 0 : 1,
-    );
-    return `Larger than the ${gb} GB limit.`;
+    return `Larger than the ${formatBytes(config.maxSizeBytes)} limit.`;
   }
   return null;
 }
 
-/** "MP4, MOV, MKV, WEBM, M4V up to 10 GB" — straight from the server's limits. */
+/**
+ * "MP4, MOV, MKV, WEBM, M4V up to 4 MB" — straight from the server's limits.
+ *
+ * Formatted by size rather than always in gigabytes: the ceiling is not always
+ * a large round number, and rounding 4 MB to whole GB announced "up to 0 GB".
+ */
 export function formatLimits(config: UploadConfig | null): string {
   if (!config) return "Checking upload limits…";
   const formats = config.allowedExtensions.map((e) => e.toUpperCase()).join(", ");
-  return `${formats} up to ${Math.round(config.maxSizeBytes / 1024 ** 3)} GB`;
+  return `${formats} up to ${formatBytes(config.maxSizeBytes)}`;
 }
