@@ -68,6 +68,8 @@ export default function PosterWall() {
   return (
     <div
       aria-hidden
+      data-fx="parallax"
+      data-amount="70"
       className="absolute inset-y-0 right-0 w-full overflow-hidden md:w-[88%] lg:w-[86%]"
       style={{ perspective: "1600px" }}
     >

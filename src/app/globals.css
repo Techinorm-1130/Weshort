@@ -106,19 +106,14 @@ body {
   background: var(--background);
 }
 
-/* Full-viewport sections: only one section in view at a time, gentle snap */
-html {
-  scroll-snap-type: y proximity;
-}
+/* Full-viewport sections. Snapping is off: proximity snap grabs the scroll near
+   every section boundary, which reads as the page catching and sticking rather
+   than as a gentle assist. The full-height sections give the same rhythm. */
 .section-screen {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  scroll-snap-align: start;
-}
-@media (max-width: 767px) {
-  html { scroll-snap-type: none; } /* free scrolling on phones */
 }
 /* Blue-black band used only by the Categories and FAQ screens:
    starts/ends on the page colour so it blends with neighbouring sections. */
@@ -175,6 +170,48 @@ body::-webkit-scrollbar {
   width: 0;
   height: 0;
   display: none;              /* Chrome, Safari, Edge */
+}
+
+/*
+ * Slim dark scrollbar, for panels that scroll on top of the page.
+ *
+ * The page's own scrollbar is hidden above, but a dropdown or any inner panel
+ * still gets the operating system's — which on Windows is a wide light track
+ * with stepper arrows, and looks like a hole punched in a dark menu.
+ */
+.scroll-slim {
+  color-scheme: dark;                                       /* dark native fallback */
+  scrollbar-width: thin;                                    /* Firefox */
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+.scroll-slim::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.scroll-slim::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-slim::-webkit-scrollbar-thumb {
+  /* the transparent border + background-clip is what insets the thumb */
+  background-color: rgba(255, 255, 255, 0.16);
+  background-clip: content-box;
+  border: 3px solid transparent;
+  border-radius: 999px;
+}
+.scroll-slim:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.26);
+}
+.scroll-slim::-webkit-scrollbar-thumb:active {
+  background-color: rgba(255, 255, 255, 0.38);
+}
+/* the little stepper arrows at each end */
+.scroll-slim::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.scroll-slim::-webkit-scrollbar-corner {
+  background: transparent;
 }
 /* Body / subtext: Manrope. Headings + display text: Netflix Sans. */
 body {
@@ -366,7 +403,7 @@ html.intro-playing body { overflow: hidden; }
 
 /* stays black until the entry has finished, then reveals the page */
 @keyframes intro-out {
-  0%, 94% { opacity: 1; visibility: visible; }
+  0%, 91% { opacity: 1; visibility: visible; }
   100%    { opacity: 0; visibility: hidden; }
 }
 
@@ -385,13 +422,17 @@ html.intro-playing body { overflow: hidden; }
   );
   animation: intro-glow 6s ease-in-out forwards;
 }
+/*
+ * Past the 45% peak the bloom only ever decays. It used to lift again at 82%
+ * and then cut to nothing eight frames later, which is what read as a flash
+ * right at the end of the opener.
+ */
 @keyframes intro-glow {
   0%        { opacity: 0; transform: scale(0.5); }
   20%       { opacity: 0.55; transform: scale(0.78); }
   45%       { opacity: 0.75; transform: scale(0.95); }
-  70%       { opacity: 0.6; transform: scale(1.02); }
-  82%       { opacity: 0.68; transform: scale(1.05); }
-  90%, 100% { opacity: 0; transform: scale(1.12); }
+  70%       { opacity: 0.5; transform: scale(1.02); }
+  88%, 100% { opacity: 0; transform: scale(1.1); }
 }
 
 /* the logo drifting into focus over ~2.7s — the slowest move of the entry */
@@ -406,8 +447,8 @@ html.intro-playing body { overflow: hidden; }
   12%       { opacity: 0.5; }
   28%       { opacity: 0.9; transform: scale(1.1); filter: blur(7px); }
   45%       { opacity: 1; transform: scale(1); filter: blur(0); }
-  82%       { opacity: 1; transform: scale(1); filter: blur(0); }
-  90%, 100% { opacity: 0; transform: scale(1.05); filter: blur(3px); }
+  80%       { opacity: 1; transform: scale(1); filter: blur(0); }
+  88%, 100% { opacity: 0; transform: scale(1.04); filter: blur(3px); }
 }
 
 /* highlight travelling slowly across the wordmark once it is sharp */
@@ -441,8 +482,8 @@ html.intro-playing body { overflow: hidden; }
   0%, 40%   { opacity: 0; transform: scaleX(0); }
   46%       { opacity: 1; }
   62%       { opacity: 1; transform: scaleX(1); }
-  84%       { opacity: 1; transform: scaleX(1); }
-  90%, 100% { opacity: 0; transform: scaleX(1); }
+  80%       { opacity: 1; transform: scaleX(1); }
+  88%, 100% { opacity: 0; transform: scaleX(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {

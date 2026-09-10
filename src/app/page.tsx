@@ -9,15 +9,20 @@ import Faq from "@/components/landing/Faq";
 import Plans from "@/components/landing/Plans";
 import TrialBanner from "@/components/landing/TrialBanner";
 import SiteFooter from "@/components/layout/SiteFooter";
+import ScrollFx from "@/components/layout/ScrollFx";
 
 /**
  * Landing page. Every block is a full-viewport "screen" (see .section-screen)
  * so only one section is in view at a time; scrolling snaps gently between them.
+ *
+ * Scroll effects are opt-in per element via `data-fx` — see ScrollFx.tsx for the
+ * catalogue and which section uses which.
  */
 export default function Home() {
   return (
     <>
       <Navbar />
+      <ScrollFx />
       <main>
         <div id="home" className="section-screen">
           <Hero />

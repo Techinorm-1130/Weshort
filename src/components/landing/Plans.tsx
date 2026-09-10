@@ -149,6 +149,8 @@ export default function Plans() {
         {/* the panel: tier list on the left, the picked plan on show to the right */}
         <Reveal delay={220} distance={30} scale className="relative mt-8">
           <div
+            data-fx="fey"
+            data-amount="0.09"
             className="rounded-[22px] p-px"
             style={{
               background:

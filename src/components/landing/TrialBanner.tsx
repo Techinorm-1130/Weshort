@@ -21,7 +21,7 @@ export default function TrialBanner() {
         <div className="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/90 to-background-dark/30" />
         <div className="absolute inset-0 bg-brand/15 mix-blend-multiply" />
 
-        <div className="relative flex flex-col gap-6 px-8 py-11 sm:flex-row sm:items-center sm:justify-between sm:px-12">
+        <div data-fx="spiral" data-amount="9" className="relative flex flex-col gap-6 px-8 py-11 sm:flex-row sm:items-center sm:justify-between sm:px-12">
           <div className="max-w-xl">
             <h2 className="text-2xl font-bold sm:text-3xl">Start your free trial today!</h2>
             <p className="mt-2 text-sm text-muted">

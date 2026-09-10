@@ -21,13 +21,18 @@ type Props = {
   style?: CSSProperties;
 };
 
-/** Reveals children with a fade + slide when they scroll into view. */
+/**
+ * Reveals children with a fade + slide when they scroll into view.
+ *
+ * Timings match the cue sheet in lib/cue.ts, so the sections that animate
+ * element-by-element and the ones that reveal as a block move at the same speed.
+ */
 export default function Reveal({
   children,
   delay = 0,
   from = "up",
-  distance = 28,
-  duration = 700,
+  distance = 44,
+  duration = 840,
   scale = false,
   once = false,
   className = "",
@@ -55,29 +60,30 @@ export default function Reveal({
       }
     };
 
-    // Fallback check (also covers programmatic scrolls / anchors / environments
-    // where IntersectionObserver notifications are delayed). Kept synchronous
-    // and cheap: one getBoundingClientRect per element per scroll event.
-    const check = () => {
-      const r = el.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      apply(r.bottom > 0 && r.top < vh && r.right > 0 && r.left < window.innerWidth);
-    };
-
+    // Visibility comes from the observer alone. There used to be a scroll
+    // listener here as a fallback, measuring the element on every scroll event —
+    // with ~23 of these on the landing page that is 23 forced layouts per event,
+    // which is what made scrolling stutter. The observer reports the same thing
+    // off the main thread.
     let io: IntersectionObserver | null = null;
     if (typeof IntersectionObserver !== "undefined") {
       io = new IntersectionObserver(([entry]) => apply(entry.isIntersecting), { threshold: 0 });
       io.observe(el);
+    } else {
+      // no observer (very old browser): show it and leave it shown
+      apply(true);
     }
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check);
+
+    // anchors jump without firing the observer in some browsers
+    const check = () => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      apply(r.bottom > 0 && r.top < vh);
+    };
     window.addEventListener("hashchange", check);
-    check();
 
     function cleanup() {
       io?.disconnect();
-      window.removeEventListener("scroll", check);
-      window.removeEventListener("resize", check);
       window.removeEventListener("hashchange", check);
     }
     return cleanup;
@@ -102,8 +108,10 @@ export default function Reveal({
         opacity: shown ? 1 : 0,
         transform: shown ? "translate3d(0,0,0) scale(1)" : hidden,
         // animate in; reset instantly when it leaves the viewport (no visible fade-out)
+        // opacity lands before the movement does, so the element is fully present
+        // while it is still gliding — the same curve the upload pages use
         transition: shown
-          ? `opacity ${duration}ms cubic-bezier(.22,.61,.36,1) ${delay}ms, transform ${duration}ms cubic-bezier(.22,.61,.36,1) ${delay}ms`
+          ? `opacity 620ms linear ${delay}ms, transform ${duration}ms cubic-bezier(.22,.61,.36,1) ${delay}ms`
           : "none",
         willChange: "opacity, transform",
       }}

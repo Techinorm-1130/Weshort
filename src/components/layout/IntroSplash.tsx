@@ -1,26 +1,41 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IMAGES, INTRO_ONCE_PER_TAB, INTRO_SEEN_KEY } from "@/lib/constants";
+import { IMAGES, INTRO_DONE_EVENT, INTRO_ONCE_PER_TAB, INTRO_SEEN_KEY } from "@/lib/constants";
 
 /** Must match the .intro animation length in globals.css. */
 const DURATION = 6000;
 /** Reduced motion gets a plain, short hold instead of the light show. */
 const DURATION_REDUCED = 700;
 
+/** The one route the opener belongs to. */
+const LANDING = "/";
+
 /**
  * Logo opener: a red bloom, the logo pulled into focus, one light sweep and a red
  * rule drawn beneath it, then a long steady hold before it hands over to the page.
  *
- * It is server-rendered so it covers the very first paint. It plays once per tab:
- * the flag is written to sessionStorage here and read by the inline script in
- * layout.tsx, which hides the overlay before paint on later loads (no flash).
+ * It is server-rendered so it covers the very first paint, and it plays only on
+ * a load of the landing page. Opening an upload or account page directly gets
+ * straight to the point, and walking back to the home page from inside the site
+ * does not replay it — the entry route is captured once, on mount.
+ *
+ * Nothing else has to know: the entrances that hold back for the opener look for
+ * the `intro-playing` class, which is only ever set when it is really running.
  */
 export default function IntroSplash() {
+  const pathname = usePathname();
+  // captured on mount, so later navigation cannot start the opener
+  const [entryPath] = useState(pathname);
+  const onLanding = entryPath === LANDING;
+
   const [done, setDone] = useState(false);
 
   useEffect(() => {
+    if (!onLanding) return;
+
     let seen = false;
     if (INTRO_ONCE_PER_TAB) {
       try {
@@ -42,6 +57,9 @@ export default function IntroSplash() {
     if (!seen) root.classList.add("intro-playing");
     const t = window.setTimeout(() => {
       root.classList.remove("intro-playing");
+      // tell the page it can start: anything that animates on entry has been
+      // waiting behind the overlay for this
+      window.dispatchEvent(new Event(INTRO_DONE_EVENT));
       setDone(true);
     }, hold);
 
@@ -49,9 +67,9 @@ export default function IntroSplash() {
       window.clearTimeout(t);
       root.classList.remove("intro-playing");
     };
-  }, []);
+  }, [onLanding]);
 
-  if (done) return null;
+  if (!onLanding || done) return null;
 
   return (
     <div className="intro" aria-hidden>

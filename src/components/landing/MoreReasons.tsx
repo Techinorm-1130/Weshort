@@ -112,14 +112,12 @@ export default function MoreReasons() {
 
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <Reveal>
-          <h2 className="max-w-lg text-[2.6rem] font-bold leading-[1.1] tracking-tight sm:text-[3.2rem]">
-            More Reasons
-            <br />
-            to Join
+          <h2 data-fx="words" className="max-w-lg text-[2.6rem] font-bold leading-[1.1] tracking-tight sm:text-[3.2rem]">
+            More Reasons to Join
           </h2>
         </Reveal>
 
-        <div className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div data-fx="stagger" className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
           {REASONS.map((r, i) => (
             <Reveal key={r.title} delay={i * 110} distance={30}>
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-[0_10px_28px_-12px_rgba(0,0,0,0.9)]">

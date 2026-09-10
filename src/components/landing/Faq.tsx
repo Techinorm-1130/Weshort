@@ -97,7 +97,7 @@ export default function Faq() {
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <Reveal>
-            <h2 className="text-3xl font-bold sm:text-4xl">Frequently Asked Questions</h2>
+            <h2 data-fx="words" className="text-3xl font-bold sm:text-4xl">Frequently Asked Questions</h2>
             <p className="mt-2 max-w-2xl text-sm text-muted">
               Got questions? We&apos;ve got answers! Check out our FAQ section to find
               answers to the most common questions about Weshort.

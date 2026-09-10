@@ -29,7 +29,7 @@ function KidsMock() {
     { src: KIDS[1], cls: "left-1/2 top-[4%] -translate-x-1/2 z-20" },
   ];
   return (
-    <div className="relative mx-auto aspect-[4/3] w-full max-w-md select-none">
+    <div data-fx="rotate" data-amount="7" className="relative mx-auto aspect-[4/3] w-full max-w-md select-none">
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[55%] w-[60%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/20 blur-[70px]" />
       {fan.map((p) => (
         <div key={p.src} className={`absolute w-[38%] ${p.cls}`}>

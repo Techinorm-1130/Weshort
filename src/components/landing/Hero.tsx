@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import PosterWall from "@/components/landing/PosterWall";
 import { HERO_AVATARS, ROUTES } from "@/lib/constants";
+import { useCue } from "@/lib/cue";
 
 const STATS = [
   { value: "98%", label: "Viewer satisfaction" },
@@ -9,13 +12,22 @@ const STATS = [
   { value: "4K", label: "Highest quality" },
 ];
 
+/** The beats, in milliseconds from the hero being cleared to run. */
+const CUE = { pill: 0, title: 140, lede: 280, actions: 420, stats: 560 };
+
 /**
  * Landing hero: copy and calls to action on the left, a tilted wall of drifting
  * posters filling the right, everything sitting on black.
+ *
+ * The copy arrives line by line from the left, the same entrance the upload
+ * pages use. It runs on load rather than waiting for the logo opener, so the
+ * hero is already there the moment the overlay lifts.
  */
 export default function Hero() {
+  const { ref, enter } = useCue();
+
   return (
-    <section className="font-display relative flex flex-1 items-center overflow-hidden bg-black">
+    <section ref={ref} className="font-display relative flex flex-1 items-center overflow-hidden bg-black">
       <PosterWall />
 
       {/* black falls across the wall from the left so the copy always reads */}
@@ -52,8 +64,8 @@ export default function Hero() {
         <div className="max-w-2xl">
           {/* social proof */}
           <div
-            className="animate-fade-up inline-flex items-center gap-3 rounded-full border border-white/12 bg-white/[0.06] py-1.5 pl-1.5 pr-4 backdrop-blur-md"
-            style={{ animationDelay: "60ms" }}
+            className="inline-flex items-center gap-3 rounded-full border border-white/12 bg-white/[0.06] py-1.5 pl-1.5 pr-4 backdrop-blur-md"
+            style={enter(CUE.pill, "left", 32)}
           >
             <span className="flex -space-x-2.5">
               {HERO_AVATARS.map((src, i) => (
@@ -72,8 +84,8 @@ export default function Hero() {
           </div>
 
           <h1
-            className="animate-fade-up mt-6 text-[2.5rem] font-black leading-[1.04] tracking-[-0.02em] sm:text-[3.35rem] lg:text-[4rem]"
-            style={{ animationDelay: "140ms" }}
+            className="mt-6 text-[2.5rem] font-black leading-[1.04] tracking-[-0.02em] sm:text-[3.35rem] lg:text-[4rem]"
+            style={enter(CUE.title, "left", 56)}
           >
             Unlimited Movies,
             <br />
@@ -81,16 +93,16 @@ export default function Hero() {
           </h1>
 
           <p
-            className="animate-fade-up mt-5 max-w-xl text-[16.5px] leading-relaxed text-white/65"
-            style={{ animationDelay: "260ms" }}
+            className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-white/65"
+            style={enter(CUE.lede)}
           >
             Award-winning short films, original series and festival premieres — the best of
             world cinema, in your pocket. Starts at €7.99. Cancel anytime.
           </p>
 
           <div
-            className="animate-fade-up mt-7 flex flex-wrap items-center gap-3.5"
-            style={{ animationDelay: "380ms" }}
+            className="mt-7 flex flex-wrap items-center gap-3.5"
+            style={enter(CUE.actions, "left", 34)}
           >
             <Link
               href={ROUTES.signup}
@@ -124,8 +136,8 @@ export default function Hero() {
 
           {/* stats */}
           <div
-            className="animate-fade-up mt-10 flex flex-wrap items-start gap-x-12 gap-y-5"
-            style={{ animationDelay: "500ms" }}
+            className="mt-10 flex flex-wrap items-start gap-x-12 gap-y-5"
+            style={enter(CUE.stats, "below", 28)}
           >
             {STATS.map((s) => (
               <div key={s.label}>

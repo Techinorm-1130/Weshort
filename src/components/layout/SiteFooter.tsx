@@ -67,7 +67,7 @@ export default function SiteFooter() {
             alt=""
             width={IMAGES.logoWatermarkSize.width}
             height={IMAGES.logoWatermarkSize.height}
-            className={`pointer-events-none absolute top-1/2 hidden w-[26%] max-w-none -translate-y-1/2 select-none opacity-[0.03] md:block ${side}`}
+            className={`pointer-events-none absolute top-1/2 hidden h-auto w-[26%] max-w-none -translate-y-1/2 select-none opacity-[0.03] md:block ${side}`}
           />
         ))}
 

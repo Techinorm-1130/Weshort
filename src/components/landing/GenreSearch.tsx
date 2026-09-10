@@ -147,9 +147,15 @@ const ROWS: Genre[][] = [
   ],
 ];
 
+/**
+ * No backdrop-blur on these. Every pill lives inside a track that animates for
+ * ever, and a backdrop-filter re-samples what is behind it on each frame — with
+ * three rows of them that is what made the section stutter while scrolling. They
+ * sit on a flat dark ground, so the blur was buying nothing.
+ */
 function Pill({ genre }: { genre: Genre }) {
   return (
-    <span className="group flex shrink-0 items-center gap-3.5 rounded-full border border-white/10 bg-white/[0.045] py-2 pl-2 pr-7 backdrop-blur-sm transition duration-300 hover:border-white/25 hover:bg-white/[0.09]">
+    <span className="group flex shrink-0 items-center gap-3.5 rounded-full border border-white/10 bg-white/[0.045] py-2 pl-2 pr-7 transition duration-300 hover:border-white/25 hover:bg-white/[0.09]">
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white shadow-[0_8px_20px_-10px_rgba(0,0,0,0.9)]">
         <svg
           viewBox="0 0 24 24"
@@ -239,7 +245,7 @@ export default function GenreSearch() {
           // out of pills before it wraps and leaves a gap on the right.
           const strip = [...row, ...row];
           return (
-            <div key={i} className="flex w-full overflow-hidden">
+            <div key={i} data-fx="shiftx" data-amount={i % 2 ? -90 : 90} className="flex w-full overflow-hidden">
               {/* no gap on this flex: each pass carries its own trailing space, so
                   the seam between the two passes is exactly one pill gap wide */}
               <div

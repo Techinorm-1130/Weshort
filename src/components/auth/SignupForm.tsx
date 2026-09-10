@@ -2,11 +2,13 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import AuthCard from "@/components/auth/AuthCard";
 import SocialAuth from "@/components/auth/SocialAuth";
 import Input, { LockIcon, MailIcon, UserIcon } from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { ROUTES } from "@/lib/constants";
+import { signIn } from "@/lib/session";
 import {
   validateConfirmPassword,
   validateEmail,
@@ -18,6 +20,7 @@ import type { FormErrors, SignupFormValues } from "@/types/auth";
 type Props = { initialEmail?: string };
 
 export default function SignupForm({ initialEmail = "" }: Props) {
+  const router = useRouter();
   const [values, setValues] = useState<SignupFormValues>({
     name: "",
     email: initialEmail,
@@ -44,8 +47,13 @@ export default function SignupForm({ initialEmail = "" }: Props) {
     if (Object.values(next).some(Boolean)) return;
 
     setLoading(true);
-    // TODO: call your signup API here
-    setTimeout(() => setLoading(false), 800);
+    // TODO: call your signup API here. The account it creates is what every
+    // submission is stamped with, so the admin knows who sent a film.
+    setTimeout(() => {
+      setLoading(false);
+      signIn({ name: values.name, email: values.email });
+      router.push(ROUTES.home);
+    }, 800);
   }
 
   return (

@@ -2,15 +2,18 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import AuthCard from "@/components/auth/AuthCard";
 import SocialAuth from "@/components/auth/SocialAuth";
 import Input, { LockIcon, MailIcon } from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { ROUTES } from "@/lib/constants";
+import { signIn } from "@/lib/session";
 import { validateEmail, validatePassword } from "@/lib/validators";
 import type { FormErrors, LoginFormValues } from "@/types/auth";
 
 export default function LoginForm() {
+  const router = useRouter();
   const [values, setValues] = useState<LoginFormValues>({
     email: "",
     password: "",
@@ -29,8 +32,15 @@ export default function LoginForm() {
     if (next.email || next.password) return;
 
     setLoading(true);
-    // TODO: call your auth API here
-    setTimeout(() => setLoading(false), 800);
+    // TODO: call your auth API here. Until then the account is built from what
+    // was typed — the name is derived from the address, and the profile page can
+    // correct it. Signing in is what puts the Upload menu in the header, and the
+    // account is what every submission is stamped with.
+    setTimeout(() => {
+      setLoading(false);
+      signIn({ email: values.email });
+      router.push(ROUTES.home);
+    }, 800);
   }
 
   return (

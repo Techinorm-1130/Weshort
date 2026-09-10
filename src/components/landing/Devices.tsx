@@ -271,7 +271,7 @@ function WhiteTabletFrame({ children, className = "" }: { children: React.ReactN
  */
 function DevicesMock() {
   return (
-    <div className="relative mx-auto aspect-[1570/620] w-full select-none">
+    <div data-fx="zoom" data-amount="0.12" className="relative mx-auto aspect-[1570/620] w-full select-none">
       {/* TV — back centre */}
       <div className="absolute left-[30%] top-[4%] w-[40%]">
         <div className="rounded-[4px] bg-[#0b0d12] p-[4px] shadow-[0_40px_80px_rgba(0,0,0,0.75)] ring-1 ring-white/10">
@@ -314,18 +314,59 @@ function DevicesMock() {
   );
 }
 
-/** Small red W mark + rule, like the WeShort site headings. */
-function Accent({ className = "" }: { className?: string }) {
+/**
+ * The lit stage the family stands on. Every layer sits *behind or below* the
+ * devices and is clipped by this box, so none of it can push the composition
+ * out of the section the way a scaled wrapper would.
+ */
+function Stage({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`mb-5 flex items-center gap-4 ${className}`}>
-      <svg viewBox="0 0 48 34" className="h-5 w-auto" fill="none" stroke="#e50914" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 5 L15 29 L26 5" />
-        <path d="M22 5 L33 29 L44 5" />
-      </svg>
-      <span className="h-px flex-1 bg-white/15" />
+    <div className="relative">
+      {/* key light behind the TV */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[-6%] h-[72%] w-[62%] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(120,170,255,0.16),transparent_70%)] blur-[60px]"
+      />
+      {/* warm brand kicker from the left, so the light has a direction */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-[6%] top-[26%] h-[52%] w-[38%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(229,9,20,0.13),transparent_70%)] blur-[70px]"
+      />
+
+      <div className="relative">{children}</div>
+
+      {/* floor: horizon, pooled light, and a mirrored smear under each device */}
+      <div aria-hidden className="pointer-events-none relative mx-auto h-14 w-full sm:h-20">
+        <div className="absolute inset-x-[8%] top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_46%_100%_at_50%_0%,rgba(120,170,255,0.16),transparent_72%)]" />
+        {FOOTPRINTS.map((f) => (
+          <span
+            key={f.key}
+            className="absolute top-0 rounded-b-[50%] bg-gradient-to-b from-white/[0.09] to-transparent blur-[6px]"
+            style={{ left: f.left, width: f.width, height: f.height }}
+          />
+        ))}
+        <div className="absolute inset-x-[14%] top-0 h-3 bg-[radial-gradient(ellipse_50%_100%_at_50%_0%,rgba(0,0,0,0.55),transparent_78%)]" />
+      </div>
     </div>
   );
 }
+
+/** Where each device meets the floor, used to place its reflection. */
+const FOOTPRINTS = [
+  { key: "tablet", left: "3%", width: "24%", height: "52%" },
+  { key: "phone", left: "27.5%", width: "6.5%", height: "64%" },
+  { key: "tv", left: "30%", width: "40%", height: "100%" },
+  { key: "laptop", left: "69%", width: "28%", height: "58%" },
+];
+
+/** The four surfaces, named under the stage like a caption line. */
+const SURFACES = [
+  { label: "Smart TV", icon: <><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></> },
+  { label: "Laptop", icon: <><rect x="3" y="5" width="18" height="11" rx="2" /><path d="M2 19h20" /></> },
+  { label: "Tablet", icon: <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M11 18h2" /></> },
+  { label: "Phone", icon: <><rect x="7" y="2" width="10" height="20" rx="2.5" /><path d="M11 18.5h2" /></> },
+];
 
 /** "Weshort on all devices" — first half of the features band. */
 export default function Devices() {
@@ -333,39 +374,64 @@ export default function Devices() {
 
   return (
     <section id="devices" className="section-screen px-6 pb-10 pt-28 sm:px-12">
-      <div className="mx-auto w-full max-w-[min(64rem,105vh)]">
-        {/* the device shot leads and takes the whole width; the copy follows under it */}
-        <Reveal distance={40} scale>
-          {image ? (
-            <div className="relative mx-auto aspect-[1570/620] w-full">
-              <Image
-                src={image}
-                alt=""
-                fill
-                sizes="(max-width: 1024px) 92vw, 1150px"
-                className="object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
-              />
-            </div>
-          ) : (
-            <DevicesMock />
-          )}
-        </Reveal>
+      {/* stage on the left, copy on the right; stacks on small screens */}
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.7fr_1fr] lg:gap-14">
+        <div>
+          <Reveal from="left" distance={40} scale>
+            <Stage>
+              {image ? (
+                <div className="relative mx-auto aspect-[1570/620] w-full">
+                  <Image
+                    src={image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 92vw, 720px"
+                    className="object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
+                  />
+                </div>
+              ) : (
+                <DevicesMock />
+              )}
+            </Stage>
+          </Reveal>
 
-        <Reveal delay={120} className="mx-auto mt-8 max-w-3xl text-center sm:mt-10">
-          <Accent className="mx-auto max-w-[200px]" />
-          <h2 className="text-2xl font-bold leading-snug sm:text-4xl">
-            Your Entertainment, Anytime, Anywhere: Weshort On All Devices
+          {/* caption line: the surfaces themselves, named */}
+          <Reveal from="left" delay={100} distance={16} className="mt-1">
+            <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 sm:gap-x-9">
+              {SURFACES.map((s) => (
+                <li key={s.label} className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-white/45">
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-white/35" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    {s.icon}
+                  </svg>
+                  {s.label}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </div>
+
+        {/* copy column */}
+        <Reveal from="right" delay={140} className="lg:pl-2">
+          <div aria-hidden className="mb-6 h-px w-16 bg-gradient-to-r from-brand/70 to-transparent" />
+
+          <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-brand">Watch anywhere</p>
+
+          <h2 className="mt-4 text-[1.7rem] font-bold leading-[1.15] tracking-[-0.02em] sm:text-[2.15rem]">
+            Your entertainment, anytime, anywhere
+            <span className="mt-1 block font-light text-white/55">Weshort on all your devices</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted">
+
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-muted">
             Weshort is compatible with a wide range of devices, so you can watch on the device of your
             choice. Whether you prefer watching on a big screen or a smaller device, Weshort has you covered.
           </p>
+
           <Link
             href="#"
-            className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white hover:underline"
+            className="group mt-7 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] py-2.5 pl-5 pr-4 text-sm font-semibold text-white backdrop-blur-sm transition-colors duration-300 hover:border-white/35 hover:bg-white/[0.08]"
           >
-            View Device List
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            View device list
+            <svg viewBox="0 0 24 24" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </Link>

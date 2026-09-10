@@ -14,6 +14,13 @@ export const INTRO_SEEN_KEY = "ws-intro-seen";
 export const INTRO_ONCE_PER_TAB = false;
 
 /**
+ * Fired on window when the logo opener has finished (or immediately, if it was
+ * never going to play). Page entrances wait for it — otherwise they run and
+ * finish underneath the overlay, and the visitor sees a static page.
+ */
+export const INTRO_DONE_EVENT = "ws-intro-done";
+
+/**
  * Central place for static asset paths.
  * Drop your files into `public/images/...` and update these paths.
  */
@@ -87,6 +94,15 @@ export const ROUTES = {
   login: "/login",
   signup: "/signup",
   forgotPassword: "/forgot-password",
+  /** The signed-in member's profile and their submissions. */
+  account: "/account",
+  /** Upload landing pages, reached from the header's Upload menu once signed in. */
+  uploadProducer: "/upload/producer-director",
+  uploadProductionHouse: "/upload/production-house",
+  /** The submission form itself. `as` seeds who is submitting. */
+  submit: "/upload/submit",
+  submitAsDirector: "/upload/submit?as=director",
+  submitAsProductionHouse: "/upload/submit?as=production-house",
 } as const;
 
 export const LANGUAGES = [
