@@ -21,6 +21,8 @@ import { extensionOf } from "@/lib/upload-meta";
 
 /** Mirrors the admin's defaults in src/server/uploads/store.ts. */
 const CONFIG: UploadConfig = {
+  // the stand-in reads the file itself; nothing travels anywhere
+  transport: "stream",
   maxSizeBytes: 10 * 1024 ** 3,
   allowedExtensions: ["mp4", "mov", "mkv", "webm", "m4v"],
   allowedMimeTypes: ["video/mp4", "video/quicktime", "video/x-matroska", "video/webm"],

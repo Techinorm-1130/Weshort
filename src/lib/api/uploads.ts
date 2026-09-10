@@ -15,6 +15,7 @@
  * no screen changes.
  * ------------------------------------------------------------------------ */
 
+import { upload as blobUpload } from "@vercel/blob/client";
 import type { UploadAsset, UploadConfig, UploadMedia } from "@/types/upload";
 import { API_BASE, USING_MOCK } from "./http";
 import {
@@ -43,6 +44,14 @@ export const uploadApi = {
   /** Limits and accepted formats, so nothing on screen hardcodes them. */
   config: async (): Promise<UploadConfig> =>
     USING_MOCK ? mockConfig() : json<UploadConfig>(`${BASE}/config`),
+
+  /** Tells the API where the bytes landed once they went straight to storage. */
+  attach: async (id: string, url: string, sizeBytes: number): Promise<UploadAsset> =>
+    json<UploadAsset>(`${BASE}/${id}/attach`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, sizeBytes }),
+    }),
 
   create: async (input: CreateAssetInput): Promise<UploadAsset> =>
     USING_MOCK
@@ -118,12 +127,65 @@ export interface Transfer {
  * number the field shows comes from bytes the browser has actually handed to
  * the network.
  */
-export function sendFile(
+/**
+ * Sends the file straight to object storage, then tells the API where it went.
+ *
+ * This exists because a serverless request body is capped at a few megabytes —
+ * far below a film — and the rejection happens before any of our code runs. The
+ * bytes never touch the API; only the short token exchange and the small note
+ * at the end do.
+ */
+function sendViaBlob(
   assetId: string,
   file: File,
   onProgress: (progress: TransferProgress) => void,
 ): Transfer {
+  const controller = new AbortController();
+  let lastAt = Date.now();
+  let lastLoaded = 0;
+  let speedBps = 0;
+
+  const promise = (async () => {
+    const result = await blobUpload(file.name, file, {
+      access: "public",
+      handleUploadUrl: `${BASE}/blob`,
+      contentType: file.type || "application/octet-stream",
+      // large files go up in parts, retried individually
+      multipart: true,
+      abortSignal: controller.signal,
+      onUploadProgress: ({ loaded, total, percentage }) => {
+        const now = Date.now();
+        const elapsed = (now - lastAt) / 1000;
+        if (elapsed >= 0.25) {
+          speedBps = (loaded - lastLoaded) / elapsed;
+          lastAt = now;
+          lastLoaded = loaded;
+        }
+        const remaining = total - loaded;
+        onProgress({
+          loaded,
+          total,
+          percent: Math.floor(percentage),
+          speedBps: Math.max(0, speedBps),
+          etaSec: speedBps > 0 ? Math.round(remaining / speedBps) : null,
+        });
+      },
+    });
+
+    return uploadApi.attach(assetId, result.url, file.size);
+  })();
+
+  return { promise, abort: () => controller.abort() };
+}
+
+export function sendFile(
+  assetId: string,
+  file: File,
+  onProgress: (progress: TransferProgress) => void,
+  config?: UploadConfig | null,
+): Transfer {
   if (USING_MOCK) return mockSend(assetId, file, onProgress);
+  if (config?.transport === "blob") return sendViaBlob(assetId, file, onProgress);
 
   const xhr = new XMLHttpRequest();
   let lastAt = Date.now();

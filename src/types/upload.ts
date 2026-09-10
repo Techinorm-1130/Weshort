@@ -79,6 +79,8 @@ export interface UploadMedia {
 /** One stored video, as the uploads API returns it. */
 export interface UploadAsset {
   id: ID;
+  /** Set when the bytes live in object storage rather than on the API's disk. */
+  blobUrl?: string;
   fileName: string;
   internalName: string;
   displayName: string;
@@ -103,6 +105,12 @@ export interface UploadAsset {
 
 /** Upload limits, owned by the backend so no screen hardcodes them. */
 export interface UploadConfig {
+  /**
+   * How the bytes travel. "blob" sends them from the browser straight to object
+   * storage; "stream" sends them through the API, which only works where the
+   * host does not cap the request body.
+   */
+  transport: "blob" | "stream";
   maxSizeBytes: number;
   allowedExtensions: string[];
   allowedMimeTypes: string[];

@@ -182,6 +182,7 @@ export function VideoUploader({
     };
     onChange(base);
 
+    // the API decides how the bytes travel; the field just follows it
     const sending = sendFile(created.id, file, (progress) => {
       latest.current({
         ...base,
@@ -190,7 +191,7 @@ export function VideoUploader({
         speedBps: progress.speedBps,
         etaSec: progress.etaSec,
       });
-    });
+    }, config);
     transfer.current = sending;
 
     try {
