@@ -83,6 +83,78 @@ function SubmissionRow({ item }: { item: ContentItem }) {
   );
 }
 
+/* -------------------------------- routes -------------------------------- */
+
+/** The two ways in, and what each is for. */
+const ROUTES_IN = [
+  {
+    href: ROUTES.uploadProducer,
+    label: "Producer & Director",
+    note: "You made the film. Send it, keep your rights, hear back either way.",
+    icon: (
+      <>
+        <path d="M4 6.5h11a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 16V8A1.5 1.5 0 0 1 4 6.5Z" />
+        <path d="m16.5 13 4 2.5v-7L16.5 11" />
+      </>
+    ),
+  },
+  {
+    href: ROUTES.uploadProductionHouse,
+    label: "Production House",
+    note: "A whole slate at once, with delivery specs and terms set out up front.",
+    icon: (
+      <>
+        <path d="M3 20.5V6l7-3v17.5" />
+        <path d="M10 9.5h8a1 1 0 0 1 1 1v10" />
+        <path d="M2 20.5h20M6 9v.01M6 13v.01M14 13v.01M14 17v.01" />
+      </>
+    ),
+  },
+];
+
+/**
+ * The two upload routes, as pages to read rather than buttons to press.
+ *
+ * They are not actions — they describe what Weshort takes and on what terms —
+ * so they sit apart from "Submit a film" instead of beside it, where a row of
+ * similar-looking buttons made all three look like the same kind of thing.
+ */
+function Routes() {
+  return (
+    <div>
+      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/30">
+        How you work with us
+      </p>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        {ROUTES_IN.map((route) => (
+          <Link
+            key={route.href}
+            href={route.href}
+            className="group rounded-lg border border-white/10 bg-white/[0.03] p-5 transition duration-200 hover:border-white/25 hover:bg-white/[0.05]"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05] text-white/65 transition duration-200 group-hover:border-brand/50 group-hover:text-brand">
+              <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                {route.icon}
+              </svg>
+            </span>
+
+            <h3 className="mt-3.5 text-[14.5px] font-semibold">{route.label}</h3>
+            <p className="mt-1 text-[12.5px] leading-relaxed text-white/45">{route.note}</p>
+
+            <span className="mt-3.5 inline-flex items-center gap-1.5 text-[12px] font-semibold text-white/35 transition duration-200 group-hover:text-white">
+              See the page
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* -------------------------------- details ------------------------------- */
 
 function Details({ account }: { account: Account }) {
@@ -239,32 +311,23 @@ export default function ProfileView() {
         </button>
         </div>
 
-        {/*
-          What a member came here to do, kept with who they are rather than
-          further down the page: send a film, or read either of the two routes
-          describing what we take and on what terms.
-        */}
-        <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-white/[0.08] pt-5">
+        {/* The one thing a member came here to do, kept with who they are. */}
+        <div className="mt-6 border-t border-white/[0.08] pt-5">
           <Link
             href={ROUTES.submit}
-            className="rounded bg-brand px-5 py-2.5 text-[13px] font-semibold text-white transition hover:bg-brand-hover"
+            className="inline-flex items-center gap-2 rounded bg-brand px-5 py-2.5 text-[13px] font-semibold text-white transition hover:bg-brand-hover"
           >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 16V4M7 9l5-5 5 5" />
+              <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
+            </svg>
             Submit a film
-          </Link>
-          <Link
-            href={ROUTES.uploadProducer}
-            className="rounded border border-white/12 px-4 py-2.5 text-[13px] font-medium text-white/70 transition hover:border-white/30 hover:text-white"
-          >
-            Producer &amp; Director
-          </Link>
-          <Link
-            href={ROUTES.uploadProductionHouse}
-            className="rounded border border-white/12 px-4 py-2.5 text-[13px] font-medium text-white/70 transition hover:border-white/30 hover:text-white"
-          >
-            Production House
           </Link>
         </div>
       </div>
+
+      {/* -------------------------------- routes ----------------------------- */}
+      <Routes />
 
       {/* ------------------------------- totals ------------------------------ */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
