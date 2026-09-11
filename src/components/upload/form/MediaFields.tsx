@@ -426,10 +426,18 @@ export function VideoUploader({
 
 /* -------------------------------- artwork ------------------------------- */
 
-/** Artwork slot. Holds a local object URL until the backend returns a real one. */
+/**
+ * Artwork slot. Holds a local object URL until the backend returns a real one.
+ *
+ * The size it wants is written in the empty box rather than in a note beside
+ * it: the moment anyone reads this is the moment before they go looking for a
+ * file, and a requirement found after the wrong file has been chosen is a
+ * requirement found too late.
+ */
 export function ImageDrop({
   label,
   ratio = "aspect-[2/3]",
+  spec,
   value,
   onChange,
   required,
@@ -437,6 +445,8 @@ export function ImageDrop({
 }: {
   label: string;
   ratio?: string;
+  /** What this slot wants, e.g. "3:4 · 1500 × 2000 px". */
+  spec?: string;
   value: string | null;
   onChange: (v: string | null) => void;
   required?: boolean;
@@ -466,6 +476,11 @@ export function ImageDrop({
         {label}
         {required && <span className="text-brand/90">*</span>}
       </p>
+      {spec ? (
+        <p className="mt-0.5 font-mono text-[10.5px] uppercase tracking-[0.1em] text-white/35">
+          {spec}
+        </p>
+      ) : null}
 
       <button
         type="button"
@@ -482,8 +497,9 @@ export function ImageDrop({
         ) : value ? (
           <>
             <Image src={value} alt="" fill sizes="220px" className="object-cover" unoptimized />
-            <span className="absolute inset-0 flex items-center justify-center bg-black/60 text-[12px] font-semibold opacity-0 transition group-hover:opacity-100">
-              Replace
+            <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/60 opacity-0 transition group-hover:opacity-100">
+              <span className="text-[12px] font-semibold">Replace</span>
+              {spec ? <span className="px-3 text-center text-[11px] text-white/60">{spec}</span> : null}
             </span>
           </>
         ) : (
@@ -494,6 +510,7 @@ export function ImageDrop({
               <circle cx="9" cy="9" r="1.4" />
             </svg>
             <span className="text-[12px]">Add image</span>
+            {spec ? <span className="px-3 text-center text-[11px] text-white/30">{spec}</span> : null}
           </span>
         )}
       </button>

@@ -63,10 +63,16 @@ const SPECS = [
       "An English SRT is required for non-English dialogue. We produce, translate and QC every other language at our own cost, and send them for your approval.",
   },
   {
-    label: "Artwork",
-    summary: "One 3:4 poster, one 16:9 still",
+    label: "Poster",
+    summary: "3:4 · 1500 × 2000 px",
     value:
-      "One 3:4 poster and one 16:9 still, 2000 px on the long edge, with no titling burned in — we localise the title per territory.",
+      "One 3:4 poster at 1500 × 2000 px, JPG or PNG, with no titling burned in — we localise the title per territory. This is the image the film is listed under.",
+  },
+  {
+    label: "Thumbnail",
+    summary: "16:9 · 1920 × 1080 px",
+    value:
+      "One 16:9 still at 1920 × 1080 px, taken from the film rather than made for it. A banner at 2560 × 1440 px is optional and only used if the film is featured.",
   },
   {
     label: "Rights",

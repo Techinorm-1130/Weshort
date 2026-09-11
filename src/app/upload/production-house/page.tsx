@@ -40,10 +40,16 @@ const SPECS = [
       "A source-language SRT per title. We produce, translate and QC every other language at our own cost, and send them back for approval before release.",
   },
   {
-    label: "Artwork",
-    summary: "3:4 poster and 16:9 key art",
+    label: "Poster",
+    summary: "3:4 · 1500 × 2000 px",
     value:
-      "A 3:4 poster and 16:9 key art per title, 2000 px on the long edge. Layered files are welcome — we localise titling rather than burning it in.",
+      "A 3:4 poster per title at 1500 × 2000 px. Layered files are welcome — we localise titling rather than burning it in, so send it clean where you can.",
+  },
+  {
+    label: "Thumbnail",
+    summary: "16:9 · 1920 × 1080 px",
+    value:
+      "16:9 key art per title at 1920 × 1080 px, with a 2560 × 1440 px banner for anything you want considered for the front of the site.",
   },
   {
     label: "Rights",

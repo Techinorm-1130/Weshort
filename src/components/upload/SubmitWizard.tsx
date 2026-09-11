@@ -588,6 +588,7 @@ export default function SubmitWizard({
             <div className="grid gap-6 sm:grid-cols-3">
               <ImageDrop
                 label="Poster"
+                spec="3:4 · 1500 × 2000 px"
                 value={draft.poster}
                 onChange={(v) => set({ poster: v })}
                 required
@@ -596,12 +597,14 @@ export default function SubmitWizard({
               <ImageDrop
                 label="Thumbnail"
                 ratio="aspect-video"
+                spec="16:9 · 1920 × 1080 px"
                 value={draft.thumbnail}
                 onChange={(v) => set({ thumbnail: v })}
               />
               <ImageDrop
                 label="Banner"
                 ratio="aspect-video"
+                spec="16:9 · 2560 × 1440 px"
                 value={draft.banner}
                 onChange={(v) => set({ banner: v })}
               />
