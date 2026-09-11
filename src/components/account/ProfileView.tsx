@@ -278,13 +278,11 @@ export default function ProfileView() {
 
       {/* ---------------------------- submissions ---------------------------- */}
       <div className="rounded-lg border border-white/12 bg-white/[0.03] p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-[15px] font-semibold">Your submissions</h2>
-            <p className="mt-1 text-[13px] text-white/45">
-              Every film sent from this account, and where it is in review.
-            </p>
-          </div>
+        <div>
+          <h2 className="text-[15px] font-semibold">Your submissions</h2>
+          <p className="mt-1 text-[13px] text-white/45">
+            Every film sent from this account, and where it is in review.
+          </p>
         </div>
 
         {error ? (
