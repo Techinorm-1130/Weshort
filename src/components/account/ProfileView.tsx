@@ -206,7 +206,8 @@ export default function ProfileView() {
   return (
     <div className="flex flex-col gap-8">
       {/* ------------------------------ identity ----------------------------- */}
-      <div className="flex flex-wrap items-center gap-6 rounded-lg border border-white/12 bg-white/[0.03] p-6">
+      <div className="rounded-lg border border-white/12 bg-white/[0.03] p-6">
+        <div className="flex flex-wrap items-center gap-6">
         <span
           className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-[1.6rem] font-bold text-white ring-1 ring-white/20"
           style={{ background: account.color }}
@@ -236,6 +237,33 @@ export default function ProfileView() {
         >
           Sign out
         </button>
+        </div>
+
+        {/*
+          What a member came here to do, kept with who they are rather than
+          further down the page: send a film, or read either of the two routes
+          describing what we take and on what terms.
+        */}
+        <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-white/[0.08] pt-5">
+          <Link
+            href={ROUTES.submit}
+            className="rounded bg-brand px-5 py-2.5 text-[13px] font-semibold text-white transition hover:bg-brand-hover"
+          >
+            Submit a film
+          </Link>
+          <Link
+            href={ROUTES.uploadProducer}
+            className="rounded border border-white/12 px-4 py-2.5 text-[13px] font-medium text-white/70 transition hover:border-white/30 hover:text-white"
+          >
+            Producer &amp; Director
+          </Link>
+          <Link
+            href={ROUTES.uploadProductionHouse}
+            className="rounded border border-white/12 px-4 py-2.5 text-[13px] font-medium text-white/70 transition hover:border-white/30 hover:text-white"
+          >
+            Production House
+          </Link>
+        </div>
       </div>
 
       {/* ------------------------------- totals ------------------------------ */}
@@ -256,32 +284,6 @@ export default function ProfileView() {
             <p className="mt-1 text-[13px] text-white/45">
               Every film sent from this account, and where it is in review.
             </p>
-          </div>
-          {/*
-            Sending a film leads, because that is the thing to do here. Beside it
-            are the two routes describing what we take and on what terms — worth
-            a second look before submitting, and otherwise only reachable from
-            the header menu.
-          */}
-          <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href={ROUTES.uploadProducer}
-              className="rounded border border-white/12 px-3.5 py-2.5 text-[13px] font-medium text-white/70 transition hover:border-white/30 hover:text-white"
-            >
-              Producer &amp; Director
-            </Link>
-            <Link
-              href={ROUTES.uploadProductionHouse}
-              className="rounded border border-white/12 px-3.5 py-2.5 text-[13px] font-medium text-white/70 transition hover:border-white/30 hover:text-white"
-            >
-              Production House
-            </Link>
-            <Link
-              href={ROUTES.submit}
-              className="rounded bg-brand px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-brand-hover"
-            >
-              Submit a film
-            </Link>
           </div>
         </div>
 
