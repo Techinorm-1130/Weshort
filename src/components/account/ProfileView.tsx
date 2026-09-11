@@ -257,12 +257,32 @@ export default function ProfileView() {
               Every film sent from this account, and where it is in review.
             </p>
           </div>
-          <Link
-            href={ROUTES.submit}
-            className="rounded bg-brand px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-brand-hover"
-          >
-            Submit a film
-          </Link>
+          {/*
+            Sending a film leads, because that is the thing to do here. Beside it
+            are the two routes describing what we take and on what terms — worth
+            a second look before submitting, and otherwise only reachable from
+            the header menu.
+          */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={ROUTES.uploadProducer}
+              className="rounded border border-white/12 px-3.5 py-2.5 text-[13px] font-medium text-white/70 transition hover:border-white/30 hover:text-white"
+            >
+              Producer &amp; Director
+            </Link>
+            <Link
+              href={ROUTES.uploadProductionHouse}
+              className="rounded border border-white/12 px-3.5 py-2.5 text-[13px] font-medium text-white/70 transition hover:border-white/30 hover:text-white"
+            >
+              Production House
+            </Link>
+            <Link
+              href={ROUTES.submit}
+              className="rounded bg-brand px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-brand-hover"
+            >
+              Submit a film
+            </Link>
+          </div>
         </div>
 
         {error ? (
