@@ -31,9 +31,9 @@ export default async function SubmitPage({
   return (
     <>
       <Navbar />
-      <main className="font-display relative min-h-screen bg-black px-6 pb-24 pt-28 sm:px-10 sm:pt-32">
+      <main className="font-display surface-blue-black relative min-h-screen px-6 pb-24 pt-28 sm:px-10 sm:pt-32">
         <div className="mx-auto max-w-6xl">
-          <header className="border-b border-white/[0.08] pb-8">
+          <header className="border-b border-brand/50 pb-8">
             <p className="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[0.3em] text-brand">
               <span className="h-px w-7 bg-brand" />
               Upload
@@ -52,7 +52,6 @@ export default async function SubmitPage({
           </div>
         </div>
       </main>
-      <div aria-hidden className="h-24 bg-gradient-to-b from-black to-background sm:h-32" />
       <SiteFooter />
     </>
   );

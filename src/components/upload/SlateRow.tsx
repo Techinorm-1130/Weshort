@@ -52,7 +52,7 @@ function Brackets() {
         <span
           key={pos}
           aria-hidden
-          className={`pointer-events-none absolute h-3.5 w-3.5 border-white/35 transition-colors duration-300 group-hover:border-brand ${pos}`}
+          className={`pointer-events-none absolute h-3.5 w-3.5 border-edge/55 transition-colors duration-300 group-hover:border-brand ${pos}`}
         />
       ))}
     </>
@@ -66,8 +66,9 @@ function Brackets() {
  *
  * The strip is a real scroll container rather than a transformed track, so a
  * trackpad, a touch screen and the keyboard all work; the arrows only page it.
- * `scroll-pl` keeps the snap line on the page edge — without it, mandatory
- * snapping aligns the first card to the scrollport and eats the padding.
+ * The scroll padding in `.edge-x` keeps the snap line on the page edge —
+ * without it, mandatory snapping aligns the first card to the scrollport and
+ * eats the gutter.
  */
 export default function SlateRow({
   heading,
@@ -108,7 +109,7 @@ export default function SlateRow({
                 type="button"
                 onClick={() => page(dir)}
                 aria-label={dir === -1 ? "Previous titles" : "Next titles"}
-                className="flex h-9 w-9 items-center justify-center border border-white/15 bg-white/[0.04] text-white/60 backdrop-blur-md transition duration-300 hover:border-brand/70 hover:bg-brand/10 hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border border-edge/45 bg-white/[0.04] text-white/60 backdrop-blur-md transition duration-300 hover:border-brand/70 hover:bg-brand/10 hover:text-white"
                 style={{
                   clipPath:
                     "polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px))",
@@ -125,14 +126,14 @@ export default function SlateRow({
 
       <div
         ref={strip}
-        className={`mt-6 flex snap-x snap-mandatory scroll-pl-8 gap-5 overflow-x-auto scroll-smooth pb-2 sm:scroll-pl-14 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${EDGE}`}
+        className={`mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${EDGE}`}
       >
         {titles.map((t, i) => (
           <article key={t.title} className="group w-[19rem] shrink-0 snap-start sm:w-[24rem]">
             {/* the notch is cut from the frame itself, so the still is clipped to
                 the same shape rather than sitting in a rounded box */}
             <div
-              className="relative aspect-[16/9] overflow-hidden bg-black ring-1 ring-white/10 transition-shadow duration-500 group-hover:shadow-[0_0_40px_-12px_rgba(229,9,20,0.85)] group-hover:ring-brand/45"
+              className="relative aspect-[16/9] overflow-hidden bg-black ring-1 ring-edge/45 transition-shadow duration-500 group-hover:shadow-[0_0_40px_-12px_rgba(229,9,20,0.85)] group-hover:ring-brand/45"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px))",
@@ -163,7 +164,7 @@ export default function SlateRow({
                 WS-{String(1041 + i * 7).padStart(4, "0")}
               </span>
 
-              <span className="absolute left-3 top-3 flex items-center gap-1.5 border border-white/20 bg-black/60 px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-white/85 backdrop-blur-md">
+              <span className="absolute left-3 top-3 flex items-center gap-1.5 border border-edge/45 bg-black/60 px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-white/85 backdrop-blur-md">
                 <span className="h-1 w-1 bg-brand" />
                 {t.rating}
               </span>

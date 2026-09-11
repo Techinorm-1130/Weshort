@@ -192,7 +192,7 @@ export default function FilmHero() {
 
             <Link
               href="#specs"
-              className="inline-flex items-center rounded border border-white/25 px-5 py-2.5 text-[12px] font-bold uppercase tracking-[0.1em] text-white/90 backdrop-blur-md transition duration-300 hover:border-white/50 hover:bg-white/[0.08]"
+              className="inline-flex items-center rounded border border-edge/50 px-5 py-2.5 text-[12px] font-bold uppercase tracking-[0.1em] text-white/90 backdrop-blur-md transition duration-300 hover:border-edge/85 hover:bg-white/[0.08]"
             >
               Submission specs
             </Link>
@@ -229,7 +229,7 @@ export default function FilmHero() {
                 type="button"
                 onClick={() => page(dir)}
                 aria-label={dir === -1 ? "Previous films" : "Next films"}
-                className="flex h-7 w-7 items-center justify-center border border-white/25 text-white/70 backdrop-blur-md transition duration-300 hover:border-brand/80 hover:bg-brand/10 hover:text-white"
+                className="flex h-7 w-7 items-center justify-center border border-edge/50 text-white/70 backdrop-blur-md transition duration-300 hover:border-brand/80 hover:bg-brand/10 hover:text-white"
                 style={{ clipPath: "polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)" }}
               >
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -242,12 +242,12 @@ export default function FilmHero() {
 
         <div
           ref={strip}
-          className={`mt-3 flex snap-x snap-mandatory scroll-pl-8 gap-4 overflow-x-auto scroll-smooth pb-2 sm:scroll-pl-14 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${EDGE}`}
+          className={`mt-3 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${EDGE}`}
         >
           {SELECTED.map((f, i) => (
             <article key={f.title} className="group w-[7.25rem] shrink-0 snap-start sm:w-[8.5rem]">
               <div
-                className="relative aspect-[3/4] overflow-hidden bg-black ring-1 ring-white/12 transition duration-500 group-hover:ring-brand/60 group-hover:shadow-[0_0_30px_-10px_rgba(229,9,20,0.9)]"
+                className="relative aspect-[3/4] overflow-hidden bg-black ring-1 ring-edge/45 transition duration-500 group-hover:ring-brand/60 group-hover:shadow-[0_0_30px_-10px_rgba(229,9,20,0.9)]"
                 style={{ clipPath: NOTCH }}
               >
                 <Image
@@ -269,7 +269,7 @@ export default function FilmHero() {
                   <span
                     key={pos}
                     aria-hidden
-                    className={`pointer-events-none absolute h-2.5 w-2.5 border-white/40 transition-colors duration-300 group-hover:border-brand ${pos}`}
+                    className={`pointer-events-none absolute h-2.5 w-2.5 border-edge/55 transition-colors duration-300 group-hover:border-brand ${pos}`}
                   />
                 ))}
 

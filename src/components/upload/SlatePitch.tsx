@@ -151,7 +151,7 @@ export default function SlatePitch() {
                   className={`w-full rounded-2xl border p-6 text-left transition-all duration-500 sm:p-7 ${
                     lit
                       ? "scale-[1.02] border-brand/55 bg-[radial-gradient(120%_160%_at_0%_0%,rgba(229,9,20,0.16),rgba(8,6,8,0.9)_58%)] shadow-[0_0_50px_-18px_rgba(229,9,20,0.75),0_30px_70px_-45px_rgba(0,0,0,1)]"
-                      : "border-white/[0.06] bg-black/40"
+                      : "border-edge/22 bg-black/40"
                   }`}
                 >
                   <div className="flex items-center gap-3.5">

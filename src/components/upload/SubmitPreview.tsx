@@ -50,7 +50,7 @@ export default function SubmitPreview({
         How it will look
       </p>
 
-      <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_40px_80px_-40px_rgba(0,0,0,1)]">
+      <div className="mt-4 overflow-hidden rounded-xl border border-edge/70 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_40px_80px_-40px_rgba(0,0,0,1)]">
         {/* poster */}
         <div className="relative aspect-[2/3] w-full overflow-hidden bg-white/[0.03]">
           <Poster
@@ -70,7 +70,7 @@ export default function SubmitPreview({
 
           {/* the play affordance only makes sense once there is a film behind it */}
           {ready && (
-            <span className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/45 backdrop-blur-sm">
+            <span className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-edge/50 bg-black/45 backdrop-blur-sm">
               <svg viewBox="0 0 24 24" className="ml-0.5 h-5 w-5 text-white" fill="currentColor">
                 <path d="M8 5.5v13l11-6.5z" />
               </svg>
@@ -109,7 +109,7 @@ export default function SubmitPreview({
               {genres.map((g) => (
                 <span
                   key={g}
-                  className="rounded-full border border-white/10 px-2.5 py-0.5 text-[11px] text-white/55"
+                  className="rounded-full border border-edge/40 px-2.5 py-0.5 text-[11px] text-white/55"
                 >
                   {g}
                 </span>

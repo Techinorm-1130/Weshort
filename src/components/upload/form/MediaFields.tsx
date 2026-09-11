@@ -27,7 +27,7 @@ function StatusPill({ state }: { state: UploadState }) {
         ? "border-brand/50 bg-brand/12 text-brand"
         : state === "processing"
           ? "border-amber-400/40 bg-amber-400/10 text-amber-300"
-          : "border-white/15 bg-white/[0.05] text-white/60";
+          : "border-edge/45 bg-white/[0.05] text-white/60";
 
   return (
     <span className={`shrink-0 rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] ${tone}`}>
@@ -318,10 +318,10 @@ export function VideoUploader({
           }}
           className={`mt-2 flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-6 py-9 transition ${
             dragging
-              ? "border-brand bg-brand/10"
+              ? "border-white bg-white/10"
               : error || refused
-                ? "border-brand/60 bg-white/[0.02]"
-                : "border-white/15 bg-white/[0.02] hover:border-white/35"
+                ? "border-brand bg-white/[0.02]"
+                : "border-edge/45 bg-white/[0.02] hover:border-edge/85"
           }`}
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6 text-white/45" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -332,7 +332,7 @@ export function VideoUploader({
           <span className="text-[12px] text-white/35">{formatLimits(config)}</span>
         </button>
       ) : (
-        <div className="mt-2 rounded-lg border border-white/12 bg-white/[0.03] p-4">
+        <div className="mt-2 rounded-lg border border-edge/40 bg-white/[0.03] p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p className="truncate text-[13.5px] font-medium">{value.name}</p>
@@ -400,7 +400,7 @@ export function VideoUploader({
               <button
                 type="button"
                 onClick={() => void retry()}
-                className="shrink-0 rounded border border-white/20 px-3 py-1.5 text-[12px] font-semibold text-white transition hover:border-white/45"
+                className="shrink-0 rounded border border-edge/45 px-3 py-1.5 text-[12px] font-semibold text-white transition hover:border-edge/85"
               >
                 {value.failedStage === "processing" ? "Retry processing" : "Retry upload"}
               </button>
@@ -471,8 +471,8 @@ export function ImageDrop({
         type="button"
         onClick={() => input.current?.click()}
         className={`group relative mt-2 block w-full overflow-hidden rounded-lg border border-dashed transition ${ratio} ${
-          error || problem ? "border-brand/60" : "border-white/15 hover:border-white/35"
-        } ${value ? "border-solid border-white/12" : "bg-white/[0.02]"}`}
+          error || problem ? "border-brand" : "border-edge/55 hover:border-edge/85"
+        } ${value ? "border-solid border-white/70" : "bg-white/[0.02]"}`}
       >
         {busy ? (
           <span className="flex h-full w-full flex-col items-center justify-center gap-2 text-white/50">
@@ -537,7 +537,7 @@ export function SubtitleList({
       {tracks.length > 0 && (
         <ul className="mt-3 flex flex-col gap-2">
           {tracks.map((t) => (
-            <li key={t.id} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] px-3.5 py-2.5">
+            <li key={t.id} className="flex items-center gap-3 rounded-lg border border-edge/40 bg-white/[0.03] px-3.5 py-2.5">
               <span className="w-36 shrink-0">
                 <Select
                   ariaLabel={`Language for ${t.fileName}`}
@@ -565,7 +565,7 @@ export function SubtitleList({
       <button
         type="button"
         onClick={() => input.current?.click()}
-        className="mt-3 inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/[0.04] px-4 py-2 text-[13px] font-semibold text-white/85 transition hover:border-white/35"
+        className="mt-3 inline-flex items-center gap-2 rounded-md border border-edge/45 bg-white/[0.04] px-4 py-2 text-[13px] font-semibold text-white/85 transition hover:border-edge/85"
       >
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
           <path d="M12 5v14M5 12h14" />
@@ -627,7 +627,7 @@ export function AudioTrackList({
       {tracks.length > 0 && (
         <ul className="mt-3 flex flex-col gap-2">
           {tracks.map((t) => (
-            <li key={t.id} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] px-3.5 py-2.5">
+            <li key={t.id} className="flex items-center gap-3 rounded-lg border border-edge/40 bg-white/[0.03] px-3.5 py-2.5">
               <span className="w-36 shrink-0">
                 <Select
                   ariaLabel={`Language for ${t.fileName}`}
@@ -655,7 +655,7 @@ export function AudioTrackList({
       <button
         type="button"
         onClick={() => input.current?.click()}
-        className="mt-3 inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/[0.04] px-4 py-2 text-[13px] font-semibold text-white/85 transition hover:border-white/35"
+        className="mt-3 inline-flex items-center gap-2 rounded-md border border-edge/45 bg-white/[0.04] px-4 py-2 text-[13px] font-semibold text-white/85 transition hover:border-edge/85"
       >
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
           <path d="M12 5v14M5 12h14" />

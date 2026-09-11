@@ -350,7 +350,7 @@ export default function SubmitWizard({
           </Link>
           <Link
             href={ROUTES.home}
-            className="inline-flex items-center gap-2 rounded border border-white/15 px-6 py-3 text-[13.5px] font-semibold text-white/75 transition hover:border-white/35 hover:text-white"
+            className="inline-flex items-center gap-2 rounded border border-edge/45 px-6 py-3 text-[13.5px] font-semibold text-white/75 transition hover:border-edge/85 hover:text-white"
           >
             Back to Weshort
           </Link>
@@ -422,8 +422,13 @@ export default function SubmitWizard({
           })}
         </nav>
 
-        {/* the step itself */}
-        <div className="mt-10">
+        {/*
+          One card per step. On a blue-black page a form with no edges reads as
+          text that happens to have inputs in it; the border says where the
+          thing you are filling in begins and ends.
+        */}
+        <div className="mt-10 rounded-2xl border border-edge/50 p-6 shadow-[0_30px_70px_-40px_rgba(0,0,0,0.9)] sm:p-8">
+        <div>
           <h2 className="text-[1.6rem] font-bold leading-tight tracking-[-0.03em] sm:text-[1.9rem]">
             {current.label}
           </h2>
@@ -633,7 +638,7 @@ export default function SubmitWizard({
               languages={tx?.languages ?? []}
             />
 
-            <p className="rounded-md border border-white/10 bg-white/[0.02] p-4 text-[13px] leading-relaxed text-white/50">
+            <p className="rounded-md border border-edge/40 bg-white/[0.02] p-4 text-[13px] leading-relaxed text-white/50">
               Send the source-language track only. We produce, translate and QC every other language
               at our own cost, and send them back for your approval before release.
             </p>
@@ -709,8 +714,8 @@ export default function SubmitWizard({
         {step === 4 && (
           <div className="flex flex-col gap-6">
             {/* the title, as it will read on the record */}
-            <div className="flex flex-wrap items-start gap-5 rounded-lg border border-white/10 bg-white/[0.03] p-5">
-              <div className="flex h-[6.5rem] w-[4.4rem] shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/10 bg-white/[0.04]">
+            <div className="flex flex-wrap items-start gap-5 rounded-lg border border-edge/40 bg-white/[0.03] p-5">
+              <div className="flex h-[6.5rem] w-[4.4rem] shrink-0 items-center justify-center overflow-hidden rounded-md border border-edge/40 bg-white/[0.04]">
                 <Poster
                   src={draft.poster}
                   className="h-full w-full object-cover"
@@ -741,12 +746,12 @@ export default function SubmitWizard({
                 <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/30">
                   {section.heading}
                 </p>
-                <dl className="mt-3 rounded-lg border border-white/10">
+                <dl className="mt-3 rounded-lg border border-edge/40">
                   {section.rows.map(([label, value], i) => (
                     <div
                       key={label}
                       className={`flex items-baseline gap-4 px-4 py-2.5 ${
-                        i ? "border-t border-white/[0.06]" : ""
+                        i ? "border-t border-edge/22" : ""
                       }`}
                     >
                       <dt className="w-28 shrink-0 text-[12.5px] text-white/40">{label}</dt>
@@ -797,7 +802,7 @@ export default function SubmitWizard({
         </div>
 
         {/* ------------------------------ controls ------------------------- */}
-        <div className="mt-12 flex items-center justify-between gap-4 border-t border-white/[0.08] pt-7">
+        <div className="mt-12 flex items-center justify-between gap-4 border-t border-edge/22 pt-7">
           <button
             type="button"
             onClick={() => goToStep(Math.max(0, step - 1))}
@@ -848,6 +853,7 @@ export default function SubmitWizard({
             </button>
           )}
           </div>
+        </div>
         </div>
       </div>
     </div>

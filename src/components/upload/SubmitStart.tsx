@@ -87,7 +87,7 @@ export default function SubmitStart() {
                 type="url"
                 required
                 placeholder="Link to your film…"
-                className="w-full rounded border border-white/20 bg-white/[0.06] py-3 pl-4 pr-11 text-[14px] text-white outline-none backdrop-blur-sm transition placeholder:text-white/40 focus:border-brand/70 focus:bg-white/[0.09]"
+                className="w-full rounded border border-edge/45 bg-white/[0.06] py-3 pl-4 pr-11 text-[14px] text-white outline-none backdrop-blur-sm transition placeholder:text-white/40 focus:border-white focus:bg-white/[0.09]"
               />
               <svg
                 viewBox="0 0 24 24"

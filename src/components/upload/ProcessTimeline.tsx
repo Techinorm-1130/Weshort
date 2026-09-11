@@ -111,7 +111,7 @@ export default function ProcessTimeline({ steps }: { steps: Step[] }) {
             className="absolute left-[36%] top-[calc(4rem+1.75rem)] -translate-x-1/2 sm:top-[calc(5rem+1.75rem)]"
             style={fade(CUE.note)}
           >
-            <span className="flex items-center gap-2 whitespace-nowrap rounded border border-white/15 bg-white/[0.06] px-2.5 py-1.5 text-[11.5px] text-white/75 backdrop-blur-sm">
+            <span className="flex items-center gap-2 whitespace-nowrap rounded border border-edge/45 bg-white/[0.06] px-2.5 py-1.5 text-[11.5px] text-white/75 backdrop-blur-sm">
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-brand" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <path d="m3.5 7 8.5 6 8.5-6" />

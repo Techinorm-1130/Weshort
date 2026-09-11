@@ -144,7 +144,7 @@ export default function MarketOverview() {
         {/* the chart */}
         <figure className="m-0">
           <figcaption
-            className="mb-5 flex items-baseline justify-between gap-6 border-b border-white/10 pb-3"
+            className="mb-5 flex items-baseline justify-between gap-6 border-b border-edge/40 pb-3"
             style={appear(CUE.barA)}
           >
             <span className="max-w-[16rem] text-[11.5px] leading-snug text-white/40">
@@ -209,7 +209,7 @@ export default function MarketOverview() {
                 {/* later, larger — black body with a white edge, so the pair reads
                     as one material lit two ways rather than two colours */}
                 <div
-                  className="relative flex h-full flex-1 flex-col justify-end overflow-hidden border border-white/30 bg-[linear-gradient(180deg,#17171a_0%,#0a0a0c_100%)] p-5 shadow-[0_30px_60px_-32px_rgba(0,0,0,0.95)] sm:p-6"
+                  className="relative flex h-full flex-1 flex-col justify-end overflow-hidden border border-edge/50 bg-[linear-gradient(180deg,#17171a_0%,#0a0a0c_100%)] p-5 shadow-[0_30px_60px_-32px_rgba(0,0,0,0.95)] sm:p-6"
                   style={rise(CUE.barB)}
                 >
                   <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] bg-white/70" />

@@ -75,13 +75,13 @@ export function Hero({
           </Link>
           <Link
             href={secondary.href}
-            className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/[0.04] px-6 py-3 text-[14px] font-semibold text-white/85 backdrop-blur-sm transition duration-300 hover:border-white/35 hover:text-white"
+            className="inline-flex items-center gap-2 rounded-lg border border-edge/45 bg-white/[0.04] px-6 py-3 text-[14px] font-semibold text-white/85 backdrop-blur-sm transition duration-300 hover:border-edge/85 hover:text-white"
           >
             {secondary.label}
           </Link>
         </Reveal>
 
-        <Reveal delay={200} className="mt-14 flex flex-wrap gap-x-14 gap-y-6 border-t border-white/10 pt-8">
+        <Reveal delay={200} className="mt-14 flex flex-wrap gap-x-14 gap-y-6 border-t border-edge/40 pt-8">
           {stats.map((s) => (
             <div key={s.label}>
               <p className="text-[1.9rem] font-bold leading-none tracking-tight tabular-nums">{s.value}</p>
@@ -129,7 +129,7 @@ export function Cards({
     <div className="mt-12 grid gap-4 sm:grid-cols-2">
       {items.map((c, i) => (
         <Reveal key={c.title} delay={i * 90}>
-          <div className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-colors duration-300 hover:border-white/25 hover:bg-white/[0.05]">
+          <div className="h-full rounded-2xl border border-edge/40 bg-white/[0.03] p-6 transition-colors duration-300 hover:border-edge/85 hover:bg-white/[0.05]">
             <span
               className="flex h-11 w-11 items-center justify-center rounded-xl border"
               style={{ borderColor: `${accent.line}55`, background: accent.soft, color: accent.text }}
@@ -159,7 +159,7 @@ export function Steps({
   accent: Accent;
 }) {
   return (
-    <ol className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] sm:grid-cols-2 lg:grid-cols-4">
+    <ol className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-edge/40 bg-white/[0.06] sm:grid-cols-2 lg:grid-cols-4">
       {items.map((s, i) => (
         <Reveal key={s.title} as="li" delay={i * 90} className="bg-background-dark p-6">
           <span
@@ -180,8 +180,8 @@ export function Steps({
 /** Requirements table — the detail people scroll down looking for. */
 export function Specs({ rows }: { rows: { label: string; value: string }[] }) {
   return (
-    <Reveal delay={80} className="mt-10 overflow-hidden rounded-2xl border border-white/10">
-      <dl className="divide-y divide-white/[0.07]">
+    <Reveal delay={80} className="mt-10 overflow-hidden rounded-2xl border border-edge/40">
+      <dl className="divide-y divide-edge/25">
         {rows.map((r) => (
           <div key={r.label} className="grid gap-1 bg-white/[0.02] px-6 py-4 sm:grid-cols-[13rem_1fr] sm:gap-6">
             <dt className="text-[13px] uppercase tracking-[0.14em] text-white/40">{r.label}</dt>
@@ -210,7 +210,7 @@ export function Cta({
   return (
     <section className="px-6 py-20 sm:px-12">
       <Reveal scale distance={30}>
-        <div className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border border-white/12 px-8 py-12 sm:px-14 sm:py-16">
+        <div className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border border-edge/40 px-8 py-12 sm:px-14 sm:py-16">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0"

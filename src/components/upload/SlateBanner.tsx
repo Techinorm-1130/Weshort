@@ -33,7 +33,7 @@ export default function SlateBanner({
 } = {}) {
   return (
     <section id={id} className="scroll-mt-32 px-6 py-16 sm:px-12 sm:py-20">
-      <Reveal scale distance={32} className="relative mx-auto max-w-6xl overflow-hidden rounded-xl ring-1 ring-white/10">
+      <Reveal scale distance={32} className="relative mx-auto max-w-6xl overflow-hidden rounded-xl ring-1 ring-edge/45">
         <Image
           src={image}
           alt=""

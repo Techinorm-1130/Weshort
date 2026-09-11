@@ -23,6 +23,40 @@ const APPROVAL: Record<ApprovalState, { label: string; tone: string }> = {
   rejected: { label: "Rejected", tone: "border-brand/50 bg-brand/12 text-brand" },
 };
 
+/*
+ * What happened after the yes.
+ *
+ * Approval and publication are two different things, and the gap between them
+ * is the bit people actually ask about: a film can be approved on Tuesday and
+ * not appear until its release date. Approval says the programmers said yes;
+ * this says whether anyone can watch it yet.
+ */
+function liveStateOf(item: ContentItem): { label: string; tone: string; live: boolean } | null {
+  if (item.approval.state !== "approved") return null;
+
+  if (item.status === "published") {
+    return {
+      label: "Live on Weshort",
+      tone: "border-emerald-400/70 bg-emerald-400/15 text-emerald-200",
+      live: true,
+    };
+  }
+  if (item.status === "scheduled") {
+    return {
+      label: item.publishAt ? `Live ${dateOf(item.publishAt)}` : "Scheduled",
+      tone: "border-sky-400/50 bg-sky-400/10 text-sky-200",
+      live: false,
+    };
+  }
+  // approved, but taken down again or not released — say so rather than imply
+  // it is out there
+  return {
+    label: item.status === "archived" ? "Taken down" : "Not live yet",
+    tone: "border-white/25 bg-white/[0.05] text-white/60",
+    live: false,
+  };
+}
+
 const dateOf = (iso: string) =>
   iso
     ? new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })
@@ -41,6 +75,7 @@ function Stat({ label, value }: { label: string; value: number | string }) {
 
 function SubmissionRow({ item }: { item: ContentItem }) {
   const state = APPROVAL[item.approval.state] ?? APPROVAL.draft;
+  const published = liveStateOf(item);
 
   return (
     <li className="flex flex-wrap items-center gap-4 border-b border-white/[0.07] py-4 last:border-0">
@@ -87,9 +122,30 @@ function SubmissionRow({ item }: { item: ContentItem }) {
           </Link>
         ) : null}
 
-        <span className={`rounded border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] ${state.tone}`}>
-          {state.label}
-        </span>
+        <div className="flex flex-col items-end gap-1.5">
+          <span className={`rounded border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] ${state.tone}`}>
+            {state.label}
+          </span>
+
+          {published ? (
+            <span
+              className={`flex items-center gap-1.5 rounded border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] ${published.tone}`}
+            >
+              {/* the dot only breathes for something actually playing */}
+              <span className="relative flex h-1.5 w-1.5">
+                {published.live && (
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                )}
+                <span
+                  className={`relative inline-flex h-1.5 w-1.5 rounded-full ${
+                    published.live ? "bg-emerald-400" : "bg-current opacity-60"
+                  }`}
+                />
+              </span>
+              {published.label}
+            </span>
+          ) : null}
+        </div>
       </div>
     </li>
   );
@@ -284,6 +340,8 @@ export default function ProfileView() {
   }
 
   const submissions = items ?? [];
+  // approved and actually out there — the two are not the same number
+  const live = submissions.filter((c) => c.status === "published").length;
   const count = (state: ApprovalState) =>
     submissions.filter((s) => s.approval.state === state).length;
 
@@ -342,10 +400,11 @@ export default function ProfileView() {
       <Routes />
 
       {/* ------------------------------- totals ------------------------------ */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
         <Stat label="Submitted" value={submissions.length} />
         <Stat label="In review" value={count("pending")} />
         <Stat label="Approved" value={count("approved")} />
+        <Stat label="Published" value={live} />
         <Stat label="Rejected" value={count("rejected")} />
       </div>
 

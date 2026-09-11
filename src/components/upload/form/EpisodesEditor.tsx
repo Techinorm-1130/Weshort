@@ -55,7 +55,7 @@ function Episode({
   const ready = episode.video?.state === "ready";
 
   return (
-    <li className="rounded-lg border border-white/10 bg-white/[0.02]">
+    <li className="rounded-lg border border-edge/40 bg-white/[0.02]">
       <div className="flex flex-wrap items-center gap-3 px-4 py-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/[0.06] font-mono text-[11px] font-bold tabular-nums">
           {episode.episodeNumber}
@@ -92,7 +92,7 @@ function Episode({
       </div>
 
       {open && (
-        <div className="flex flex-col gap-6 border-t border-white/[0.07] px-4 py-5">
+        <div className="flex flex-col gap-6 border-t border-edge/22 px-4 py-5">
           <div className="grid gap-6 sm:grid-cols-2">
             <Field label="Episode title" required>
               <TextInput
@@ -172,7 +172,7 @@ export default function EpisodesEditor({
   return (
     <div className="flex flex-col gap-6">
       {seasons.map((season) => (
-        <div key={season.id} className="rounded-lg border border-white/12 bg-white/[0.02] p-5">
+        <div key={season.id} className="rounded-lg border border-edge/40 bg-white/[0.02] p-5">
           <div className="flex flex-wrap items-end gap-4">
             <div className="min-w-0 flex-1">
               <Field label="Season title">
@@ -235,7 +235,7 @@ export default function EpisodesEditor({
             onClick={() =>
               patch(season.id, { episodes: [...season.episodes, newEpisode(season)] })
             }
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-white/15 px-4 py-3.5 text-[13px] font-semibold text-white/55 transition hover:border-brand/60 hover:bg-brand/[0.06] hover:text-white"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-edge/45 px-4 py-3.5 text-[13px] font-semibold text-white/55 transition hover:border-brand/60 hover:bg-brand/[0.06] hover:text-white"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
               <path d="M12 5v14M5 12h14" />

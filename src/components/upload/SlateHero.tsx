@@ -185,7 +185,7 @@ export default function SlateHero() {
 
               <Link
                 href="#delivery"
-                className="inline-flex items-center gap-2.5 rounded-md border border-white/20 bg-white/[0.07] px-6 py-3 text-[13px] font-bold uppercase tracking-[0.1em] text-white/90 backdrop-blur-md transition duration-300 hover:border-white/40 hover:bg-white/[0.12]"
+                className="inline-flex items-center gap-2.5 rounded-md border border-edge/45 bg-white/[0.07] px-6 py-3 text-[13px] font-bold uppercase tracking-[0.1em] text-white/90 backdrop-blur-md transition duration-300 hover:border-edge/85 hover:bg-white/[0.12]"
               >
                 What to upload
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
@@ -213,9 +213,9 @@ export default function SlateHero() {
             {PEOPLE.map((p) => (
               <div
                 key={p.name}
-                className="flex min-w-[15rem] items-center gap-3 rounded-xl border border-white/12 bg-black/45 p-2.5 pr-5 backdrop-blur-xl"
+                className="flex min-w-[15rem] items-center gap-3 rounded-xl border border-edge/40 bg-black/45 p-2.5 pr-5 backdrop-blur-xl"
               >
-                <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-1 ring-white/15">
+                <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-1 ring-edge/45">
                   <Image src={p.photo} alt="" fill sizes="44px" className="object-cover" />
                 </span>
                 <span className="min-w-0">

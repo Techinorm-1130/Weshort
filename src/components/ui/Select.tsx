@@ -141,10 +141,10 @@ export default function Select({
         onKeyDown={onKeyDown}
         className={`flex h-11 w-full items-center justify-between gap-3 rounded-lg border bg-white/[0.03] px-3.5 text-left text-[14px] transition ${
           invalid
-            ? "border-brand/60 bg-brand/[0.04]"
+            ? "border-brand bg-brand/[0.04]"
             : open
-              ? "border-brand/60 bg-white/[0.05]"
-              : "border-white/10 hover:border-white/20"
+              ? "border-white bg-white/[0.05]"
+              : "border-edge/55 hover:border-edge/85"
         }`}
       >
         <span className={`truncate ${chosen ? "text-white" : "text-white/35"}`}>
@@ -172,7 +172,7 @@ export default function Select({
         id={`${id}-list`}
         role="listbox"
         aria-activedescendant={open ? `${id}-option-${active}` : undefined}
-        className={`scroll-slim absolute left-0 right-0 z-50 mt-2 max-h-64 origin-top overflow-y-auto rounded-xl border border-white/12 p-1 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.95)] backdrop-blur-xl transition-all duration-150 ${
+        className={`scroll-slim absolute left-0 right-0 z-50 mt-2 max-h-64 origin-top overflow-y-auto rounded-xl border border-edge/40 p-1 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.95)] backdrop-blur-xl transition-all duration-150 ${
           open ? "pointer-events-auto scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
         }`}
         style={{ background: "linear-gradient(180deg, rgba(18,18,20,0.97) 0%, rgba(6,6,8,0.95) 100%)" }}

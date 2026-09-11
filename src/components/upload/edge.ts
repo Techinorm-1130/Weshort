@@ -7,4 +7,4 @@
  * reference back, not the string, and it stringifies into the class list as
  * "function() {...}".
  */
-export const EDGE = "px-8 sm:px-14";
+export const EDGE = "edge-x";

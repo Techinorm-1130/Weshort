@@ -58,10 +58,17 @@ const control =
   "w-full rounded-lg border bg-white/[0.03] text-[14px] text-white outline-none transition " +
   "placeholder:text-white/25 focus:bg-white/[0.05]";
 
+/*
+ * Steel blue at rest, white while it is being typed in, red when it is wrong.
+ *
+ * Every box on the page carries the same edge, so that edge says nothing about
+ * which one you are in. White does — it is the only box on the form wearing it
+ * at any moment, which is the whole job of a focus state.
+ */
 const tone = (invalid?: boolean) =>
   invalid
-    ? "border-brand/60 bg-brand/[0.04] focus:border-brand"
-    : "border-white/10 hover:border-white/20 focus:border-brand/60";
+    ? "border-brand bg-brand/[0.04] focus:border-brand"
+    : "border-edge/55 hover:border-edge/85 focus:border-white";
 
 export function TextInput({
   value,
@@ -152,10 +159,10 @@ export function ChipSelect({
             disabled={full}
             className={`h-8 rounded-full border px-3.5 text-[12.5px] font-medium transition duration-200 ${
               on
-                ? "border-brand/70 bg-brand/15 text-white"
+                ? "border-white bg-white/15 text-white"
                 : full
-                  ? "cursor-not-allowed border-white/[0.07] text-white/25"
-                  : "border-white/10 text-white/55 hover:border-white/25 hover:text-white/90"
+                  ? "cursor-not-allowed border-edge/22 text-white/25"
+                  : "border-edge/40 text-white/55 hover:border-edge/85 hover:text-white/90"
             }`}
           >
             {o.label}
@@ -177,7 +184,7 @@ export function Segmented({
   options: Option[];
 }) {
   return (
-    <span className="inline-flex rounded-lg border border-white/10 bg-white/[0.03] p-1">
+    <span className="inline-flex rounded-lg border border-edge/40 bg-white/[0.03] p-1">
       {options.map((o) => (
         <button
           key={o.value}
@@ -215,8 +222,8 @@ export function Toggle({
       aria-pressed={checked}
       className={`flex w-full items-start gap-3.5 rounded-lg border p-4 text-left transition ${
         checked
-          ? "border-brand/40 bg-brand/[0.06]"
-          : "border-white/10 bg-white/[0.02] hover:border-white/20"
+          ? "border-white bg-white/[0.08]"
+          : "border-edge/55 bg-white/[0.02] hover:border-edge/85"
       }`}
     >
       <span

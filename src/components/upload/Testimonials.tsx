@@ -193,7 +193,7 @@ export default function Testimonials() {
                 type="button"
                 onClick={() => step(dir)}
                 aria-label={dir === -1 ? "Previous entry" : "Next entry"}
-                className="flex h-9 w-9 items-center justify-center border border-white/15 bg-white/[0.04] text-white/60 backdrop-blur-md transition duration-300 hover:border-brand/70 hover:bg-brand/10 hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border border-edge/45 bg-white/[0.04] text-white/60 backdrop-blur-md transition duration-300 hover:border-brand/70 hover:bg-brand/10 hover:text-white"
                 style={{ clipPath: "polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px))" }}
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

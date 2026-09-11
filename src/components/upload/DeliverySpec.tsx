@@ -112,14 +112,14 @@ export default function DeliverySpec({
         {/* the sheet */}
         <div className="mt-8" style={enter(CUE.panel, "below")}>
           <div
-            className="relative border border-white/12 bg-[linear-gradient(150deg,rgba(229,9,20,0.06),rgba(9,9,11,0.92)_42%)]"
+            className="relative border border-edge/40 bg-[linear-gradient(150deg,rgba(229,9,20,0.06),rgba(9,9,11,0.92)_42%)]"
             style={{ clipPath: NOTCH }}
           >
             {["left-2.5 top-2.5 border-l border-t", "right-2.5 bottom-2.5 border-r border-b"].map((pos) => (
-              <span key={pos} aria-hidden className={`pointer-events-none absolute h-4 w-4 border-white/30 ${pos}`} />
+              <span key={pos} aria-hidden className={`pointer-events-none absolute h-4 w-4 border-edge/50 ${pos}`} />
             ))}
 
-            <div className="flex items-center justify-between gap-4 border-b border-white/10 px-6 py-3.5 pr-10 sm:px-8 sm:pr-12">
+            <div className="flex items-center justify-between gap-4 border-b border-edge/40 px-6 py-3.5 pr-10 sm:px-8 sm:pr-12">
               <p className="flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.24em] text-white/55">
                 <span className="animate-blink h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(229,9,20,0.9)]" />
                 {sheet}
@@ -129,7 +129,7 @@ export default function DeliverySpec({
               </p>
             </div>
 
-            <div className="divide-y divide-white/[0.07]">
+            <div className="divide-y divide-edge/25">
               {rows.map((r, i) => {
                 const isOpen = open === i;
                 return (
@@ -200,7 +200,7 @@ export default function DeliverySpec({
               })}
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 px-6 py-3.5 pb-5 pl-10 sm:px-8 sm:pb-5 sm:pl-12">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-edge/40 px-6 py-3.5 pb-5 pl-10 sm:px-8 sm:pb-5 sm:pl-12">
               <p className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-white/35">{note}</p>
               <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.18em] text-brand">
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
