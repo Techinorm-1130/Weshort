@@ -13,7 +13,7 @@ export type Errors = Partial<Record<string, string>>;
 export const FIELD_STEP: Record<string, number> = {
   type: 0, title: 0, description: 0, releaseDate: 0, language: 0,
   genres: 0, ageRating: 0, country: 0,
-  poster: 1, video: 1, trailer: 1,
+  poster: 1, video: 1, trailer: 1, seasons: 1,
   audioLanguages: 2,
   submitterName: 3, submitterEmail: 3, rights: 3,
 };
@@ -33,6 +33,28 @@ export function validate(draft: ContentItem, agreed: boolean): Errors {
 
   if (!draft.poster) e.poster = "A poster is required";
 
+  /*
+   * A series is judged on its episodes; a single title on its one film. Asking
+   * a series for a "main video" it does not have would block it for good.
+   */
+  if (draft.type === "series") {
+    const episodes = draft.seasons.flatMap((s) => s.episodes);
+
+    if (episodes.length === 0) {
+      e.seasons = "Add at least one episode";
+    } else if (episodes.some((ep) => !ep.title.trim())) {
+      e.seasons = "Every episode needs a title";
+    } else if (episodes.some((ep) => !ep.video)) {
+      e.seasons = "Every episode needs its film";
+    } else if (episodes.some((ep) => ep.video?.state === "failed")) {
+      e.seasons = "An episode failed to upload — retry it";
+    } else if (episodes.some((ep) => ep.video?.state !== "ready")) {
+      e.seasons = "Wait for every episode to finish uploading";
+    }
+
+    return finish(e, draft, agreed);
+  }
+
   // The upload has to have come out the far end of the pipeline. Which step it
   // failed at decides what we ask for, the same way the admin's wizard does.
   if (!draft.video) {
@@ -46,6 +68,18 @@ export function validate(draft: ContentItem, agreed: boolean): Errors {
     e.video = "Wait for the film to finish uploading and processing";
   }
 
+  return finish(e, draft, agreed);
+}
+
+/** The subset of messages that belong to one step. */
+export function errorsForStep(errors: Errors, step: number): Errors {
+  return Object.fromEntries(
+    Object.entries(errors).filter(([field]) => FIELD_STEP[field] === step),
+  );
+}
+
+/** The checks that apply whether it is one film or a series of them. */
+function finish(e: Errors, draft: ContentItem, agreed: boolean): Errors {
   // A trailer is optional, but a half-finished one still cannot be sent.
   if (draft.trailer && draft.trailer.state === "failed") {
     e.trailer = "The trailer upload failed — retry it, or remove it";
@@ -60,11 +94,4 @@ export function validate(draft: ContentItem, agreed: boolean): Errors {
   if (!agreed) e.rights = "Confirm you hold the rights before submitting";
 
   return e;
-}
-
-/** The subset of messages that belong to one step. */
-export function errorsForStep(errors: Errors, step: number): Errors {
-  return Object.fromEntries(
-    Object.entries(errors).filter(([field]) => FIELD_STEP[field] === step),
-  );
 }

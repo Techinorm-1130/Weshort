@@ -154,6 +154,40 @@ export interface VideoAsset {
   etaSec?: number | null;
 }
 
+/**
+ * A dubbed or original audio track supplied as its own file.
+ *
+ * Separate from `audioLanguages`, which only says what the film contains. This
+ * is for a submitter who actually has the track to hand over.
+ */
+export interface AudioTrack {
+  id: ID;
+  language: string;
+  label: string;
+  fileName: string;
+  sizeBytes: number;
+}
+
+/** One episode of a series. Each carries its own film. */
+export interface EpisodeItem {
+  id: ID;
+  seasonNumber: number;
+  episodeNumber: number;
+  title: string;
+  description: string;
+  durationSec: number;
+  releaseDate: string;
+  thumbnail: string | null;
+  video: VideoAsset | null;
+}
+
+export interface SeasonItem {
+  id: ID;
+  number: number;
+  title: string;
+  episodes: EpisodeItem[];
+}
+
 export interface SubtitleTrack {
   id: ID;
   language: string;
@@ -206,7 +240,11 @@ export interface ContentItem {
   video: VideoAsset | null;
   trailer: VideoAsset | null;
   audioLanguages: string[];
+  /** Dub files, where the submitter has them. Optional alongside the languages. */
+  audioTracks: AudioTrack[];
   subtitles: SubtitleTrack[];
+  /** Only a series uses these; a single film leaves them empty. */
+  seasons: SeasonItem[];
   access: ContentAccess;
   status: ContentStatus;
   publishAt: string;
@@ -242,7 +280,9 @@ export function emptySubmission(kind: SubmitterKind): ContentItem {
     video: null,
     trailer: null,
     audioLanguages: [],
+    audioTracks: [],
     subtitles: [],
+    seasons: [],
     access: "premium",
     status: "draft",
     publishAt: "",

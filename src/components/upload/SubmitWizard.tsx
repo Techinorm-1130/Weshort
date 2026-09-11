@@ -11,7 +11,8 @@ import {
   emptySubmission, type ContentItem, type SubmitterKind, type UploadState,
 } from "@/types/upload";
 import { ChipSelect, Field, Segmented, Select, TextArea, TextInput, Toggle } from "./form/Fields";
-import { ImageDrop, SubtitleList, VideoUploader } from "./form/MediaFields";
+import { AudioTrackList, ImageDrop, SubtitleList, VideoUploader } from "./form/MediaFields";
+import EpisodesEditor, { firstSeason } from "./form/EpisodesEditor";
 import SubmitPreview from "./SubmitPreview";
 import Poster from "@/components/ui/Poster";
 
@@ -65,6 +66,8 @@ function SUMMARY(
   stateLabel: Record<UploadState, string>,
 ): { heading: string; rows: [string, string][] }[] {
   const video = draft.video;
+  const series = draft.type === "series";
+  const episodes = draft.seasons.flatMap((s) => s.episodes);
   return [
     {
       heading: "The film",
@@ -79,14 +82,25 @@ function SUMMARY(
     },
     {
       heading: "Media",
-      rows: [
-        ["Film", video?.name ?? ""],
-        ["Status", video ? stateLabel[video.state] : ""],
-        ["Resolution", video?.width && video?.height ? `${video.width} × ${video.height}` : ""],
-        ["Trailer", draft.trailer?.name ?? ""],
-        ["Audio", draft.audioLanguages.join(", ")],
-        ["Subtitles", draft.subtitles.length ? `${draft.subtitles.length} file(s)` : ""],
-      ],
+      rows: series
+        ? [
+            ["Seasons", `${draft.seasons.length}`],
+            ["Episodes", `${episodes.length}`],
+            ["All films ready", episodes.every((e) => e.video?.state === "ready") ? "Yes" : "Not yet"],
+            ["Trailer", draft.trailer?.name ?? ""],
+            ["Audio", draft.audioLanguages.join(", ")],
+            ["Audio files", draft.audioTracks.length ? `${draft.audioTracks.length} file(s)` : ""],
+            ["Subtitles", draft.subtitles.length ? `${draft.subtitles.length} file(s)` : ""],
+          ]
+        : [
+            ["Film", video?.name ?? ""],
+            ["Status", video ? stateLabel[video.state] : ""],
+            ["Resolution", video?.width && video?.height ? `${video.width} × ${video.height}` : ""],
+            ["Trailer", draft.trailer?.name ?? ""],
+            ["Audio", draft.audioLanguages.join(", ")],
+            ["Audio files", draft.audioTracks.length ? `${draft.audioTracks.length} file(s)` : ""],
+            ["Subtitles", draft.subtitles.length ? `${draft.subtitles.length} file(s)` : ""],
+          ],
     },
     {
       heading: "You",
@@ -231,7 +245,16 @@ export default function SubmitWizard({
 
   const errors = useMemo(() => validate(draft, agreed), [draft, agreed]);
   const visible = touched.includes(step) || step === STEPS.length - 1 ? errorsForStep(errors, step) : {};
-  const set = (patch: Partial<ContentItem>) => setDraft((d) => ({ ...d, ...patch }));
+  const set = (patch: Partial<ContentItem>) =>
+    setDraft((d) => {
+      const next = { ...d, ...patch };
+      // Choosing "series" opens season one straight away — otherwise the first
+      // thing asked of a series is to create a container before anything in it.
+      if (next.type === "series" && next.seasons.length === 0) {
+        return { ...next, seasons: [firstSeason()] };
+      }
+      return next;
+    });
 
   const pending = create.pending || update.pending || send.pending;
   const failed = create.error ?? update.error ?? send.error;
@@ -516,18 +539,38 @@ export default function SubmitWizard({
         {/* ------------------------------ media ---------------------------- */}
         {step === 1 && (
           <div className="flex flex-col gap-8">
-            <VideoUploader
-              label="The film"
-              hint="ProRes 422 HQ or higher, 1080p minimum. 4K preferred."
-              value={draft.video}
-              onChange={(v) =>
-                // the runtime read off the file fills the field on step one, so
-                // nobody types a number we already know
-                set(v?.durationSec && !draft.durationSec ? { video: v, durationSec: v.durationSec } : { video: v })
-              }
-              required
-              error={visible.video}
-            />
+            {draft.type === "series" ? (
+              <div>
+                <p className="text-[12.5px] font-medium text-white/70">
+                  Episodes <span className="text-brand/90">*</span>
+                </p>
+                <p className="mt-1 text-[12px] leading-relaxed text-white/35">
+                  One film per episode, same specification as a single title.
+                </p>
+                <div className="mt-3">
+                  <EpisodesEditor
+                    seasons={draft.seasons}
+                    onChange={(seasons) => set({ seasons })}
+                  />
+                </div>
+                {visible.seasons && (
+                  <p className="mt-2 text-[12px] text-brand">{visible.seasons}</p>
+                )}
+              </div>
+            ) : (
+              <VideoUploader
+                label="The film"
+                hint="ProRes 422 HQ or higher, 1080p minimum. 4K preferred."
+                value={draft.video}
+                onChange={(v) =>
+                  // the runtime read off the file fills the field on step one, so
+                  // nobody types a number we already know
+                  set(v?.durationSec && !draft.durationSec ? { video: v, durationSec: v.durationSec } : { video: v })
+                }
+                required
+                error={visible.video}
+              />
+            )}
 
             <VideoUploader
               label="Trailer"
@@ -577,6 +620,12 @@ export default function SubmitWizard({
                 options={tx?.languages ?? []}
               />
             </Field>
+
+            <AudioTrackList
+              tracks={draft.audioTracks}
+              onChange={(v) => set({ audioTracks: v })}
+              languages={tx?.languages ?? []}
+            />
 
             <SubtitleList
               tracks={draft.subtitles}

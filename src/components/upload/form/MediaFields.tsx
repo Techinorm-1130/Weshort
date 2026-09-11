@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import type { SubtitleTrack, UploadAsset, UploadConfig, UploadState, VideoAsset } from "@/types/upload";
+import type {
+  AudioTrack, SubtitleTrack, UploadAsset, UploadConfig, UploadState, VideoAsset,
+} from "@/types/upload";
 import { probeVideo, sendFile, uploadApi, type Transfer } from "@/lib/api/uploads";
 import Select from "@/components/ui/Select";
 import {
@@ -583,6 +585,97 @@ export function SubtitleList({
             ...tracks,
             {
               id: makeId("sub"),
+              language: languages[0]?.value ?? "en",
+              label: languages[0]?.label ?? "English",
+              fileName: file.name,
+              sizeBytes: file.size,
+            },
+          ]);
+        }}
+      />
+    </div>
+  );
+}
+
+/* ------------------------------ audio tracks ---------------------------- */
+
+/**
+ * Dub files, where the submitter has them.
+ *
+ * Separate from the audio languages on the previous field: those say what the
+ * film already contains, this is for a track supplied on its own. Optional —
+ * most films arrive with their audio in the file.
+ */
+export function AudioTrackList({
+  tracks,
+  onChange,
+  languages,
+}: {
+  tracks: AudioTrack[];
+  onChange: (t: AudioTrack[]) => void;
+  languages: { value: string; label: string }[];
+}) {
+  const input = useRef<HTMLInputElement>(null);
+
+  return (
+    <div>
+      <p className="text-[12.5px] font-medium text-white/70">Separate audio files</p>
+      <p className="mt-1 text-[12px] text-white/35">
+        Optional. A dub delivered on its own, one file per language.
+      </p>
+
+      {tracks.length > 0 && (
+        <ul className="mt-3 flex flex-col gap-2">
+          {tracks.map((t) => (
+            <li key={t.id} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] px-3.5 py-2.5">
+              <span className="w-36 shrink-0">
+                <Select
+                  ariaLabel={`Language for ${t.fileName}`}
+                  value={t.language}
+                  onChange={(language) =>
+                    onChange(tracks.map((x) => (x.id === t.id ? { ...x, language } : x)))
+                  }
+                  options={languages}
+                />
+              </span>
+              <span className="min-w-0 flex-1 truncate text-[13px] text-white/70">{t.fileName}</span>
+              <span className="shrink-0 font-mono text-[11px] text-white/35">{formatBytes(t.sizeBytes)}</span>
+              <button
+                type="button"
+                onClick={() => onChange(tracks.filter((x) => x.id !== t.id))}
+                className="shrink-0 text-[12px] font-semibold text-white/45 transition hover:text-white"
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <button
+        type="button"
+        onClick={() => input.current?.click()}
+        className="mt-3 inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/[0.04] px-4 py-2 text-[13px] font-semibold text-white/85 transition hover:border-white/35"
+      >
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        Add audio file
+      </button>
+
+      <input
+        ref={input}
+        type="file"
+        accept="audio/*,.wav,.aac,.m4a,.mp3,.flac"
+        hidden
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = "";
+          if (!file) return;
+          onChange([
+            ...tracks,
+            {
+              id: makeId("aud"),
               language: languages[0]?.value ?? "en",
               label: languages[0]?.label ?? "English",
               fileName: file.name,
