@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ROUTES } from "@/lib/constants";
+import { useSession } from "@/lib/session";
 
 const OPTIONS = [
   {
@@ -32,6 +33,7 @@ const OPTIONS = [
 
 /** Header "Upload" control: a dropdown offering the two submission routes. */
 export default function UploadMenu() {
+  const { signedIn } = useSession();
   const [open, setOpen] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -93,7 +95,8 @@ export default function UploadMenu() {
           {OPTIONS.map((o) => (
             <Link
               key={o.href}
-              href={o.href}
+              // Not signed in yet: sign in first, and arrive at the profile.
+              href={signedIn ? o.href : `${ROUTES.login}?next=${encodeURIComponent(ROUTES.account)}`}
               role="menuitem"
               onClick={() => setOpen(false)}
               className="group flex items-center gap-3.5 rounded-xl px-3 py-3 transition duration-200 hover:bg-white/[0.08]"

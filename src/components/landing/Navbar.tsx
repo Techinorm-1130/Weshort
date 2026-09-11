@@ -15,8 +15,13 @@ const LINKS = [
 ];
 
 /**
- * Floating glass pill header: logo, section links, language, and either Sign In
- * or — once signed in — the Upload menu and a way back out.
+ * Floating glass pill header: logo, section links, language and the Upload menu,
+ * plus — once signed in — the avatar and a way back out.
+ *
+ * There is no Sign In button. Submitting a film is what needs an account, so
+ * that is where the ask belongs: choosing a route from the Upload menu is what
+ * sends someone to sign in, rather than a button on a page they may only be
+ * browsing.
  */
 export default function Navbar() {
   const { account, signedIn, ready } = useSession();
@@ -51,11 +56,17 @@ export default function Navbar() {
         <div className="flex shrink-0 items-center gap-2">
           <LanguageSelect compact />
 
-          {/* `ready` is false until the session has been read on the client, so
-              the header shows nothing rather than flashing the wrong control */}
+          {/*
+            The upload menu is here whether or not anyone is signed in: it is the
+            way in to submitting a film, and choosing a route from it is what
+            asks someone to sign in. `ready` is false until the session has been
+            read on the client, so the rest of the header shows nothing rather
+            than flashing the wrong control.
+          */}
+          <UploadMenu />
+
           {ready && signedIn && account && (
             <>
-              <UploadMenu />
               {/* the avatar is the way into the profile, where submissions live */}
               <Link
                 href={ROUTES.account}
@@ -75,14 +86,6 @@ export default function Navbar() {
             </>
           )}
 
-          {ready && !signedIn && (
-            <Link
-              href={ROUTES.login}
-              className="whitespace-nowrap rounded-full bg-brand px-5 py-2 text-[13px] font-semibold text-white shadow-[0_10px_26px_-10px_rgba(229,9,20,0.95),inset_0_1px_0_rgba(255,255,255,0.25)] transition duration-300 hover:bg-brand-hover active:scale-[0.98]"
-            >
-              Sign In
-            </Link>
-          )}
         </div>
       </div>
     </header>

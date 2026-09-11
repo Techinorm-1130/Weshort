@@ -12,7 +12,14 @@ import { signIn } from "@/lib/session";
 import { validateEmail, validatePassword } from "@/lib/validators";
 import type { FormErrors, LoginFormValues } from "@/types/auth";
 
-export default function LoginForm() {
+/**
+ * Only a path within this site is followed, never a full URL — otherwise the
+ * query string could send someone somewhere else entirely after signing in.
+ */
+const safeDestination = (next: string | undefined) =>
+  next && next.startsWith("/") && !next.startsWith("//") ? next : ROUTES.home;
+
+export default function LoginForm({ next }: { next?: string }) {
   const router = useRouter();
   const [values, setValues] = useState<LoginFormValues>({
     email: "",
@@ -24,12 +31,12 @@ export default function LoginForm() {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const next: FormErrors<LoginFormValues> = {
+    const problems: FormErrors<LoginFormValues> = {
       email: validateEmail(values.email),
       password: validatePassword(values.password),
     };
-    setErrors(next);
-    if (next.email || next.password) return;
+    setErrors(problems);
+    if (problems.email || problems.password) return;
 
     setLoading(true);
     // TODO: call your auth API here. Until then the account is built from what
@@ -39,7 +46,7 @@ export default function LoginForm() {
     setTimeout(() => {
       setLoading(false);
       signIn({ email: values.email });
-      router.push(ROUTES.home);
+      router.push(safeDestination(next));
     }, 800);
   }
 
