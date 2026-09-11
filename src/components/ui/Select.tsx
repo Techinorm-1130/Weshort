@@ -166,7 +166,12 @@ export default function Select({
         </svg>
       </button>
 
-      {/* the list, in the same glass as the header menus */}
+      {/*
+        The list, in the page's own blue-black rather than a neutral dark.
+        A near-black panel on a navy form reads as a window cut out of the
+        page; this is the same navy running to the same blue-black the form
+        sits on, so it reads as part of it.
+      */}
       <ul
         ref={list}
         id={`${id}-list`}
@@ -175,7 +180,7 @@ export default function Select({
         className={`scroll-slim absolute left-0 right-0 z-50 mt-2 max-h-64 origin-top overflow-y-auto rounded-xl border border-edge/40 p-1 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.95)] backdrop-blur-xl transition-all duration-150 ${
           open ? "pointer-events-auto scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
         }`}
-        style={{ background: "linear-gradient(180deg, rgba(18,18,20,0.97) 0%, rgba(6,6,8,0.95) 100%)" }}
+        style={{ background: "linear-gradient(180deg, rgba(7,32,74,0.97) 0%, rgba(2,10,28,0.96) 100%)" }}
       >
         {options.length === 0 ? (
           <li className="px-3 py-2.5 text-[13px] text-white/35">Nothing to choose yet</li>
@@ -195,7 +200,7 @@ export default function Select({
                   onClick={() => choose(index)}
                   onPointerMove={() => setActive(index)}
                   className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13.5px] transition ${
-                    isActive ? "bg-white/[0.08] text-white" : "text-white/65"
+                    isActive ? "bg-white/[0.10] text-white" : "text-white/65"
                   }`}
                 >
                   <span className="min-w-0 flex-1 truncate">{option.label}</span>

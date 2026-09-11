@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Logo from "@/components/ui/Logo";
 import LanguageSelect from "@/components/ui/LanguageSelect";
 import UploadMenu from "@/components/landing/UploadMenu";
@@ -25,6 +26,20 @@ const LINKS = [
  */
 export default function Navbar() {
   const { account, signedIn, ready } = useSession();
+  const router = useRouter();
+
+  /*
+   * Signing out sends you home.
+   *
+   * Clearing the session on its own leaves whoever pressed it standing on a
+   * page that only exists for someone signed in — the profile empties out, the
+   * upload form loses who it was for — which reads as the button not having
+   * worked, and invites a second press.
+   */
+  const leave = () => {
+    signOut();
+    router.push(ROUTES.home);
+  };
 
   return (
     <header className="animate-fade-in fixed inset-x-0 top-0 z-40 px-4 pt-4 sm:px-8 sm:pt-5">
@@ -78,7 +93,7 @@ export default function Navbar() {
               </Link>
               <button
                 type="button"
-                onClick={signOut}
+                onClick={leave}
                 className="hidden whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-medium text-white/55 transition duration-300 hover:text-white sm:block"
               >
                 Sign out

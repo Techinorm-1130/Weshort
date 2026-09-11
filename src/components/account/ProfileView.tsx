@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { submissionApi } from "@/lib/api/resources";
 import { ROUTES } from "@/lib/constants";
@@ -301,6 +302,7 @@ function Details({ account }: { account: Account }) {
 
 export default function ProfileView() {
   const { account, ready } = useSession();
+  const router = useRouter();
   const [items, setItems] = useState<ContentItem[] | null>(null);
   const [error, setError] = useState("");
 
@@ -374,7 +376,13 @@ export default function ProfileView() {
 
         <button
           type="button"
-          onClick={signOut}
+          // this page is only for someone signed in, so leaving the session
+          // means leaving the page — staying here shows an empty shell and
+          // reads as the button not having worked
+          onClick={() => {
+            signOut();
+            router.push(ROUTES.home);
+          }}
           className="shrink-0 rounded border border-white/15 px-4 py-2.5 text-[13px] font-semibold text-white/70 transition hover:border-white/35 hover:text-white"
         >
           Sign out

@@ -17,7 +17,15 @@ import type { Actor, SubmitterKind } from "@/types/upload";
  */
 
 const KEY = "ws-account";
-/** The old boolean flag, so anyone already signed in stays signed in. */
+/**
+ * A boolean flag an earlier version of this file used on its own.
+ *
+ * It is only ever cleared now. It used to be honoured on read, which meant a
+ * browser carrying the old flag and no account record was handed a fabricated
+ * one — "Member", member@weshort.com — and that stand-in then stamped every
+ * submission made in that session with an identity belonging to nobody. A flag
+ * saying somebody was signed in is not the same as knowing who.
+ */
 const LEGACY_KEY = "ws-signed-in";
 const EVENT = "ws-session-change";
 
@@ -97,30 +105,42 @@ export function buildAccount(input: Partial<Account> & { email: string }): Accou
 function read(): Account | null {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return JSON.parse(raw) as Account;
-    // signed in before this file grew an identity — keep them in, with a stand-in
-    if (localStorage.getItem(LEGACY_KEY) === "1") {
-      const account = buildAccount({ email: "member@weshort.com" });
-      localStorage.setItem(KEY, JSON.stringify(account));
-      return account;
+    if (!raw) return null;
+
+    // A record with no identity is not a session. Half-written or left over
+    // from an older shape, it is cleared rather than carried.
+    const account = JSON.parse(raw) as Partial<Account>;
+    if (!account?.id || !account.email) {
+      clear();
+      return null;
     }
-    return null;
+    return account as Account;
   } catch {
     return null;
   }
 }
 
+/** Removes every trace, whichever of the two keys is the one that throws. */
+function clear() {
+  for (const key of [KEY, LEGACY_KEY]) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      /* storage blocked — nothing more can be done about this key */
+    }
+  }
+}
+
 function write(account: Account | null) {
-  try {
-    if (account) {
+  if (!account) {
+    clear();
+  } else {
+    try {
       localStorage.setItem(KEY, JSON.stringify(account));
       localStorage.setItem(LEGACY_KEY, "1");
-    } else {
-      localStorage.removeItem(KEY);
-      localStorage.removeItem(LEGACY_KEY);
+    } catch {
+      /* storage blocked — the session just won't survive a reload */
     }
-  } catch {
-    /* storage blocked — the session just won't survive a reload */
   }
   window.dispatchEvent(new Event(EVENT));
 }
