@@ -11,6 +11,8 @@ export const taxonomyApi = {
 export const submissionApi = {
   /** Creates the draft. Called once, on the first save. */
   create: (payload: Partial<ContentItem>) => http.post<ContentItem>("/contents", payload),
+  /** One submission, to carry on where it was left. */
+  get: (id: string) => http.get<ContentItem>(`/contents/${id}`),
   update: (id: string, payload: Partial<ContentItem>) =>
     http.patch<ContentItem>(`/contents/${id}`, payload),
   /** Hands the finished draft to an admin — this is what puts it in review. */

@@ -76,9 +76,21 @@ function SubmissionRow({ item }: { item: ContentItem }) {
         ) : null}
       </div>
 
-      <span className={`shrink-0 rounded border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] ${state.tone}`}>
-        {state.label}
-      </span>
+      <div className="flex shrink-0 items-center gap-3">
+        {/* Half-finished films are worth an obvious way back into them. */}
+        {item.approval.state === "draft" ? (
+          <Link
+            href={`${ROUTES.submit}?draft=${encodeURIComponent(item.id)}`}
+            className="rounded border border-white/15 px-3 py-1.5 text-[12px] font-semibold text-white/70 transition hover:border-white/35 hover:text-white"
+          >
+            Continue
+          </Link>
+        ) : null}
+
+        <span className={`rounded border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] ${state.tone}`}>
+          {state.label}
+        </span>
+      </div>
     </li>
   );
 }

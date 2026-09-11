@@ -128,6 +128,9 @@ export async function handleMock<T>(method: string, path: string, body?: unknown
     const index = rows.findIndex((r) => r.id === id);
     if (index === -1) throw new Error("Submission not found");
 
+    // reopening a draft to carry on with it
+    if (method === "GET") return rows[index] as T;
+
     if (method === "PATCH") {
       const updated = { ...rows[index], ...(body as Partial<ContentItem>), updatedAt: nowIso() };
       rows[index] = updated;

@@ -16,13 +16,16 @@ const KINDS: SubmitterKind[] = ["producer", "director", "production-house"];
  * form opens on the right footing — the production-house page links with
  * `as=production-house`, the director page with `as=director`. It is only a
  * default; the field is editable on the "You" step.
+ *
+ * `?draft=` reopens something already started, so a film can be left half
+ * filled in and finished another day.
  */
 export default async function SubmitPage({
   searchParams,
 }: {
-  searchParams: Promise<{ as?: string }>;
+  searchParams: Promise<{ as?: string; draft?: string }>;
 }) {
-  const { as } = await searchParams;
+  const { as, draft } = await searchParams;
   const kind = KINDS.includes(as as SubmitterKind) ? (as as SubmitterKind) : "director";
 
   return (
@@ -45,7 +48,7 @@ export default async function SubmitPage({
           </header>
 
           <div className="mt-10">
-            <SubmitWizard kind={kind} />
+            <SubmitWizard kind={kind} draftId={draft} />
           </div>
         </div>
       </main>

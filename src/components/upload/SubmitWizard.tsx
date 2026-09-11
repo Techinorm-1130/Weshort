@@ -109,7 +109,14 @@ function SUMMARY(
  * the end, so a part-finished submission is recoverable and the video has an id
  * to attach to. Everything selectable is loaded from `/taxonomies`.
  */
-export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
+export default function SubmitWizard({
+  kind,
+  draftId,
+}: {
+  kind: SubmitterKind;
+  /** Set when carrying on with something already started. */
+  draftId?: string;
+}) {
   const { data: taxonomies } = useQuery(() => taxonomyApi.all());
   const { account } = useSession();
 
@@ -123,12 +130,43 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
   const [sent, setSent] = useState<ContentItem | null>(null);
   /** A problem of our own, separate from one a request reported. */
   const [problem, setProblem] = useState("");
+  /** Briefly acknowledges an explicit save, so it is clear it happened. */
+  const [justSaved, setJustSaved] = useState(false);
+  /** Set while a half-finished submission is being fetched back. */
+  const [loading, setLoading] = useState(Boolean(draftId));
 
   const create = useMutation((payload: Partial<ContentItem>) => submissionApi.create(payload));
   const update = useMutation((id: string, payload: Partial<ContentItem>) =>
     submissionApi.update(id, payload),
   );
   const send = useMutation((id: string) => submissionApi.submit(id));
+
+  /**
+   * Carries on with something already started.
+   *
+   * The whole submission comes back, so the form opens exactly where it was
+   * left — including the film, which stays uploaded and does not have to be
+   * sent again.
+   */
+  useEffect(() => {
+    if (!draftId) return;
+
+    let alive = true;
+    submissionApi
+      .get(draftId)
+      .then((found) => {
+        if (!alive) return;
+        setDraft(found);
+        // it was theirs to begin with, so the rights box was already ticked
+        setAgreed(true);
+      })
+      .catch(() => alive && setProblem("That draft could not be opened. It may have been sent already."))
+      .finally(() => alive && setLoading(false));
+
+    return () => {
+      alive = false;
+    };
+  }, [draftId]);
 
   /**
    * The signed-in account fills in who is submitting, so nobody retypes what we
@@ -221,6 +259,21 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
     goToStep(Math.min(STEPS.length - 1, step + 1));
   }
 
+  /**
+   * Keeps what has been filled in so far and says so.
+   *
+   * Every step already saves on the way past, so this mostly exists to be
+   * visible: it makes leaving a half-finished film an offered choice rather
+   * than something to hope for.
+   */
+  async function saveDraft() {
+    setProblem("");
+    const saved = await persist();
+    if (!saved) return;
+    setJustSaved(true);
+    window.setTimeout(() => setJustSaved(false), 2600);
+  }
+
   async function submit() {
     setTouched(STEPS.map((_, i) => i));
     if (Object.keys(errors).length > 0) {
@@ -280,6 +333,14 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
           </Link>
         </div>
       </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <p className="py-24 text-center text-[13.5px] text-white/40">
+        Opening where you left off…
+      </p>
     );
   }
 
@@ -700,6 +761,21 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
             Back
           </button>
 
+          <div className="flex items-center gap-4">
+            {/*
+              Leaving half-finished is an offered choice, not something to hope
+              for. What is here is kept, including the film, and the profile
+              lists it as not sent yet with a way back in.
+            */}
+            <button
+              type="button"
+              onClick={saveDraft}
+              disabled={pending}
+              className="text-[13px] font-semibold text-white/45 transition hover:text-white disabled:opacity-40"
+            >
+              {justSaved ? "Saved — finish it any time" : "Save as draft"}
+            </button>
+
           {step < STEPS.length - 1 ? (
             <button
               type="button"
@@ -722,6 +798,7 @@ export default function SubmitWizard({ kind }: { kind: SubmitterKind }) {
               {pending ? "Sending…" : "Submit for review"}
             </button>
           )}
+          </div>
         </div>
       </div>
     </div>
