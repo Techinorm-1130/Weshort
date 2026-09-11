@@ -128,8 +128,20 @@ export function VideoUploader({
     const tick = async () => {
       try {
         const asset = await uploadApi.get(assetId);
-        // still working — say nothing and ask again
-        if (!alive || asset.status === "processing" || asset.status === "uploaded") return;
+        if (!alive) return;
+
+        /*
+         * Only an outcome is worth acting on. Anything else means the pipeline
+         * is still working — and the answer may simply be out of date, because
+         * a record read moments after it was written can still be the version
+         * from before.
+         *
+         * Reacting to those put the field back to "uploading, 0%" for a film
+         * that had already arrived, and because that is no longer the state
+         * this is watching, the polling stopped and it stayed there.
+         */
+        if (asset.status !== "ready" && asset.status !== "failed") return;
+
         latest.current(fromAsset(asset));
       } catch {
         /* a dropped poll is not worth surfacing; the next one will land */
@@ -182,8 +194,12 @@ export function VideoUploader({
     };
     onChange(base);
 
+    /** Guards against a late progress event landing after the transfer is done. */
+    let finished = false;
+
     // the API decides how the bytes travel; the field just follows it
     const sending = sendFile(created.id, file, (progress) => {
+      if (finished) return;
       latest.current({
         ...base,
         progress: progress.percent,
@@ -196,9 +212,20 @@ export function VideoUploader({
 
     try {
       const uploaded = await sending.promise;
-      latest.current(fromAsset(uploaded));
+      finished = true;
+
+      /*
+       * The bytes are in. If the record does not yet say so — it may have been
+       * read back before the write settled — the honest state is still
+       * "processing", not "uploading from the start again".
+       */
+      const settled = uploaded.status === "ready" || uploaded.status === "failed";
+      latest.current(
+        settled ? fromAsset(uploaded) : { ...fromAsset(uploaded), state: "processing", progress: 100 },
+      );
     } catch (cause) {
       // An abort is a cancel, not a failure — the field simply empties.
+      finished = true;
       if (cause instanceof DOMException && cause.name === "AbortError") {
         latest.current(null);
         return;
